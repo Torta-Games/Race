@@ -35,6 +35,7 @@
 !Bullet/libx86/BulletDynamics_debug.lib
 !Bullet/libx86/LinearMath.lib
 !Bullet/libx86/LinearMath_debug.lib
+!glut/glut32.lib
 
 # Executables
 *.exe
