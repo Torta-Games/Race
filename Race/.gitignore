@@ -29,6 +29,12 @@
 !SDL_image/libx86/SDL2_image.lib
 !SDL_mixer/libx86/SDL2_mixer.lib
 !SDL2_net/lib/x86/SDL2_net.lib
+!Bullet/libx86/BulletCollision.lib
+!Bullet/libx86/BulletCollision_debug.lib
+!Bullet/libx86/BulletDynamics.lib
+!Bullet/libx86/BulletDynamics_debug.lib
+!Bullet/libx86/LinearMath.lib
+!Bullet/libx86/LinearMath_debug.lib
 
 # Executables
 *.exe
