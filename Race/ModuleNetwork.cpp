@@ -35,8 +35,107 @@ update_status ModuleNetwork::Update(float dt)
 
 	if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
 		printf("Enter the host IP: ");
-		scanf("%s", host);
+		char buffer[100];
+		fgets(buffer, sizeof(buffer), stdin);
+
+		size_t len = strlen(buffer);
+		if (len > 0 && buffer[len - 1] == '\n') {
+			buffer[len - 1] = '\0';
+		}
+
+		host = buffer;
+
 		CreateClient();
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN) {
+		StartGame();
+		OnGameStart();
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
+		waitingForStart = true;
+	}
+
+	if (serverCreated)
+	{
+		TCPsocket newClient = SDLNet_TCP_Accept(server);
+		if (newClient != nullptr) {
+			OnClientConnect(newClient);
+		}
+	}
+
+	if (clientCreated)
+	{
+		char text[10000];
+		int receivedBytes = SDLNet_TCP_Recv(client, text, sizeof(text));
+
+		if (receivedBytes > 0)
+		{
+			text[receivedBytes] = '\0';
+			sscanf_s(text, "%d", &clientIndex);
+			printf("Client index received: %d\n", clientIndex);
+		}
+
+		clientCreated = false;
+	}
+
+	if (waitingForStart && !gameStarted)
+	{
+		char text[10000];
+		int receivedBytes = SDLNet_TCP_Recv(client, text, sizeof(text));
+
+		if (receivedBytes > 0)
+		{
+			text[receivedBytes] = '\0';
+			printf("Clients: %s\n", text);
+
+			sscanf_s(text, "%d", &clientsCount);
+
+			if (clientsCount > 0)
+			{
+				OnGameStart();
+				gameStarted = true;
+				canSend = true;
+			}
+		}
+	}
+
+	if (canSend && gameStarted)
+	{
+		// send messages
+		char text[10000];
+		sprintf_s(text, "%d,%d,%d,%d,%d",
+			clientIndex,
+			App->player->up[clientIndex],
+			App->player->down[clientIndex],
+			App->player->left[clientIndex],
+			App->player->right[clientIndex]);
+
+		int messageLength = strlen(text) + 1;
+
+		if (serverHost) SDLNet_TCP_Send(connectedClients[1], text, messageLength);
+		else SDLNet_TCP_Send(client, text, messageLength);
+
+		// receive messages
+		int receivedBytes;
+		if (serverHost) receivedBytes = SDLNet_TCP_Recv(connectedClients[1], text, sizeof(text));
+		else receivedBytes = SDLNet_TCP_Recv(client, text, sizeof(text));
+
+		if (receivedBytes > 0) {
+			text[receivedBytes] = '\0';
+			printf("Stats: %s\n", text);
+
+			int newClientIndex;
+			int up, down, left, right;
+
+			sscanf_s(text, "%d,%d,%d,%d,%d", &newClientIndex, &up, &down, &left, &right);
+
+			App->player->up[newClientIndex] = up;
+			App->player->down[newClientIndex] = down;
+			App->player->left[newClientIndex] = left;
+			App->player->right[newClientIndex] = right;
+		}
 	}
 
 	return UPDATE_CONTINUE;
@@ -48,10 +147,15 @@ void ModuleNetwork::CreateServer()
 
 	server = SDLNet_TCP_Open(&ip);
 
-	if (server != nullptr) host = SDLNet_ResolveIP(&ip);
+	if (server != nullptr)
+	{
+		host = SDLNet_ResolveIP(&ip);
 
-	printf("Server created at %s\n", host);
-	
+		printf("Server created at %s\n", host);
+
+		serverCreated = true;
+	}
+	serverHost = true;
 }
 
 void ModuleNetwork::CreateClient()
@@ -69,5 +173,41 @@ void ModuleNetwork::CreateClient()
 		if (ipStringResult) {
 			printf("IP: %s\n", ipStringResult);
 		}
+
+		clientCreated = true;
 	}
+}
+
+void ModuleNetwork::OnClientConnect(TCPsocket newClient)
+{
+	if (nextClientIndex < 2)
+	{
+		connectedClients.push_back(newClient);
+		int assignedIndex = nextClientIndex;
+		nextClientIndex++;
+
+		const char indexMsg[2] = { '0' + assignedIndex, '\0' };
+		SDLNet_TCP_Send(newClient, indexMsg, sizeof(indexMsg));
+		clientsCount++;
+	}
+}
+
+void ModuleNetwork::StartGame()
+{
+	char clientCountMsg[16];
+	sprintf_s(clientCountMsg, "%d", clientsCount);
+
+	for (int i = 0; i < connectedClients.size(); ++i) {
+		SDLNet_TCP_Send(connectedClients[i], clientCountMsg, strlen(clientCountMsg) + 1);
+	}
+}
+
+void ModuleNetwork::OnGameStart()
+{
+	for (int i = 0; i < clientsCount; i++)
+	{
+		App->player->CreateCar(i);
+	}
+	gameStarted = true;
+	canSend = true;
 }

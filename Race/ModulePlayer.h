@@ -20,10 +20,20 @@ public:
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2) override;
 	bool CleanUp();
 
+	void CreateCar(int carIndex);
+
 public:
 
-	PhysVehicle3D* vehicle;
-	float turn;
-	float acceleration;
-	float brake;
+	PhysVehicle3D* vehicle[2];
+	float turn[2];
+	float acceleration[2];
+	float brake[2];
+
+	int carCount = 0;
+
+	bool up[2] = { false, false };
+	bool down[2] = { false, false };
+	bool left[2] = { false, false };
+	bool right[2] = { false, false };
+
 };

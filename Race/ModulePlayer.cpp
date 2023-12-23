@@ -5,9 +5,9 @@
 #include "PhysVehicle3D.h"
 #include "PhysBody3D.h"
 
-ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled), vehicle(NULL)
+ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	turn = acceleration = brake = 0.0f;
+
 }
 
 ModulePlayer::~ModulePlayer()
@@ -17,6 +17,124 @@ ModulePlayer::~ModulePlayer()
 bool ModulePlayer::Start()
 {
 	LOG("Loading player");
+
+	return true;
+}
+
+// Unload assets
+bool ModulePlayer::CleanUp()
+{
+	LOG("Unloading player");
+
+	return true;
+}
+
+// Update: draw background
+update_status ModulePlayer::Update(float dt)
+{
+
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && carCount < 2)
+	{
+		CreateCar(carCount);
+	}
+	
+	if (App->network->gameStarted)
+	{
+		for (int currentCar = 0; currentCar < carCount; currentCar++)
+		{
+			if (currentCar != App->network->clientIndex)
+			{
+				turn[currentCar] = acceleration[currentCar] = brake[currentCar] = 0.0f;
+
+				if (up[currentCar])
+				{
+					acceleration[currentCar] = MAX_ACCELERATION;
+				}
+
+				if (left[currentCar])
+				{
+					if (turn[currentCar] < TURN_DEGREES)
+						turn[currentCar] += TURN_DEGREES;
+				}
+
+				if (right[currentCar])
+				{
+					if (turn[currentCar] > -TURN_DEGREES)
+						turn[currentCar] -= TURN_DEGREES;
+				}
+
+				if (down[currentCar])
+				{
+					brake[currentCar] = BRAKE_POWER;
+				}
+
+				vehicle[currentCar]->ApplyEngineForce(acceleration[currentCar]);
+				vehicle[currentCar]->Turn(turn[currentCar]);
+				vehicle[currentCar]->Brake(brake[currentCar]);
+
+				vehicle[currentCar]->Render();
+			}
+		}
+
+		turn[App->network->clientIndex] = acceleration[App->network->clientIndex] = brake[App->network->clientIndex] = 0.0f;
+
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+		{
+			acceleration[App->network->clientIndex] = MAX_ACCELERATION;
+			up[App->network->clientIndex] = true;
+		}
+		else up[App->network->clientIndex] = false;
+
+		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+		{
+			if (turn[App->network->clientIndex] < TURN_DEGREES)
+				turn[App->network->clientIndex] += TURN_DEGREES;
+			left[App->network->clientIndex] = true;
+		}
+		else left[App->network->clientIndex] = false;
+
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+		{
+			if (turn[App->network->clientIndex] > -TURN_DEGREES)
+				turn[App->network->clientIndex] -= TURN_DEGREES;
+			right[App->network->clientIndex] = true;
+		}
+		else right[App->network->clientIndex] = false;
+
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+		{
+			brake[App->network->clientIndex] = BRAKE_POWER;
+			down[App->network->clientIndex] = true;
+		}
+		else down[App->network->clientIndex] = false;
+
+		vehicle[App->network->clientIndex]->ApplyEngineForce(acceleration[App->network->clientIndex]);
+		vehicle[App->network->clientIndex]->Turn(turn[App->network->clientIndex]);
+		vehicle[App->network->clientIndex]->Brake(brake[App->network->clientIndex]);
+
+		vehicle[App->network->clientIndex]->Render();
+
+		char title[80];
+		sprintf_s(title, "%.1f Km/h", vehicle[App->network->clientIndex]->GetKmh());
+		App->window->SetTitle(title);
+	}
+
+	return UPDATE_CONTINUE;
+}
+
+
+void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
+{
+	// Randomly teleport the sensor cube around 1st quadrant
+	if (body1 == App->scene_intro->sensor_cube)	body1->SetPos(20 * rand() / RAND_MAX, 3, 20 * rand() / RAND_MAX);
+	if (body2 == App->scene_intro->sensor_cube)	body2->SetPos(20 * rand() / RAND_MAX, 3, 20 * rand() / RAND_MAX);
+}
+
+void ModulePlayer::CreateCar(int carIndex)
+{
+	carCount++;
+
+	turn[carIndex] = acceleration[carIndex] = brake[carIndex] = 0.0f;
 
 	VehicleInfo car;
 
@@ -39,12 +157,12 @@ bool ModulePlayer::Start()
 
 	// Don't change anything below this line ------------------
 
-	float half_width = car.chassis_size.x*0.5f;
-	float half_length = car.chassis_size.z*0.5f;
-	
-	vec3 direction(0,-1,0);
-	vec3 axis(-1,0,0);
-	
+	float half_width = car.chassis_size.x * 0.5f;
+	float half_length = car.chassis_size.z * 0.5f;
+
+	vec3 direction(0, -1, 0);
+	vec3 axis(-1, 0, 0);
+
 	car.num_wheels = 4;
 	car.wheels = new Wheel[4];
 
@@ -96,66 +214,8 @@ bool ModulePlayer::Start()
 	car.wheels[3].brake = true;
 	car.wheels[3].steering = false;
 
-	vehicle = App->physics->AddVehicle(car);
-	vehicle->collision_listeners.add(this); // Add this module as listener to callbacks from vehicle
-	vehicle->SetPos(0, 12, 10);
-
-	return true;
-}
-
-// Unload assets
-bool ModulePlayer::CleanUp()
-{
-	LOG("Unloading player");
-
-	return true;
-}
-
-// Update: draw background
-update_status ModulePlayer::Update(float dt)
-{
-	turn = acceleration = brake = 0.0f;
-
-	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-	{
-		acceleration = MAX_ACCELERATION;
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-	{
-		if(turn < TURN_DEGREES)
-			turn +=  TURN_DEGREES;
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-	{
-		if(turn > -TURN_DEGREES)
-			turn -= TURN_DEGREES;
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-	{
-		brake = BRAKE_POWER;
-	}
-
-	vehicle->ApplyEngineForce(acceleration);
-	vehicle->Turn(turn);
-	vehicle->Brake(brake);
-
-	vehicle->Render();
-
-	char title[80];
-	sprintf_s(title, "%.1f Km/h", vehicle->GetKmh());
-	App->window->SetTitle(title);
-
-	return UPDATE_CONTINUE;
-}
-
-
-void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
-{
-	// Randomly teleport the sensor cube around 1st quadrant
-	if (body1 == App->scene_intro->sensor_cube)	body1->SetPos(20 * rand() / RAND_MAX, 3, 20 * rand() / RAND_MAX);
-	if (body2 == App->scene_intro->sensor_cube)	body2->SetPos(20 * rand() / RAND_MAX, 3, 20 * rand() / RAND_MAX);
+	vehicle[carIndex] = App->physics->AddVehicle(car);
+	vehicle[carIndex]->collision_listeners.add(this); // Add this module as listener to callbacks from vehicle
+	vehicle[carIndex]->SetPos(carIndex * 5, 5, 10);
 }
 
