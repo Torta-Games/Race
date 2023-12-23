@@ -11,11 +11,16 @@ private :
 public:
 	Application* App;
 
-	Module(Application* parent, bool start_enabled = true) : App(parent)
+	Module(Application* parent, bool start_enabled = true) : App(parent), enabled(start_enabled)
 	{}
 
 	virtual ~Module()
 	{}
+
+	bool IsEnabled() const
+	{
+		return enabled;
+	}
 
 	virtual bool Init() 
 	{
@@ -45,6 +50,24 @@ public:
 	virtual bool CleanUp() 
 	{ 
 		return true; 
+	}
+
+	void Enable()
+	{
+		if (enabled == false)
+		{
+			enabled = true;
+			Start();
+		}
+	}
+
+	void Disable()
+	{
+		if (enabled == true)
+		{
+			enabled = false;
+			CleanUp();
+		}
 	}
 
 	virtual void OnCollision(PhysBody3D* body1, PhysBody3D* body2)

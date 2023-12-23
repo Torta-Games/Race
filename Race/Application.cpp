@@ -5,11 +5,11 @@ Application::Application()
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);
 	audio = new ModuleAudio(this, true);
-	scene_intro = new ModuleSceneIntro(this);
+	scene_intro = new ModuleSceneIntro(this, false);
 	renderer3D = new ModuleRenderer3D(this);
-	camera = new ModuleCamera3D(this);
+	camera = new ModuleCamera3D(this, false);
 	physics = new ModulePhysics3D(this);
-	player = new ModulePlayer(this);
+	player = new ModulePlayer(this, false);
 	network = new ModuleNetwork(this);
 
 	// The order of calls is very important!
@@ -60,9 +60,10 @@ bool Application::Init()
 	LOG("Application Start --------------");
 	item = list_modules.getFirst();
 
-	while(item != NULL && ret == true)
+	while (item != NULL && ret == true)
 	{
-		ret = item->data->Start();
+		if (item->data->IsEnabled())
+			ret = item->data->Start();
 		item = item->next;
 	}
 	
@@ -92,7 +93,8 @@ update_status Application::Update()
 	
 	while(item != NULL && ret == UPDATE_CONTINUE)
 	{
-		ret = item->data->PreUpdate(dt);
+		if (item->data->IsEnabled())
+			ret = item->data->PreUpdate(dt);
 		item = item->next;
 	}
 
@@ -100,7 +102,8 @@ update_status Application::Update()
 
 	while(item != NULL && ret == UPDATE_CONTINUE)
 	{
-		ret = item->data->Update(dt);
+		if (item->data->IsEnabled())
+			ret = item->data->Update(dt);
 		item = item->next;
 	}
 
@@ -108,7 +111,8 @@ update_status Application::Update()
 
 	while(item != NULL && ret == UPDATE_CONTINUE)
 	{
-		ret = item->data->PostUpdate(dt);
+		if (item->data->IsEnabled())
+			ret = item->data->PostUpdate(dt);
 		item = item->next;
 	}
 

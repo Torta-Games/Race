@@ -43,4 +43,5 @@ public:
 	bool gameStarted = false;
 	bool waitingForStart = false;
 	bool serverHost = false;
+	bool multiplayer = false;
 };
