@@ -108,7 +108,12 @@ update_status ModulePlayer::Update(float dt)
 		}
 		else down[App->network->clientIndex] = false;
 
-		vehicle[App->network->clientIndex]->ApplyEngineForce(acceleration[App->network->clientIndex]);
+		if (impulseActivated)
+		{
+			vehicle[App->network->clientIndex]->ApplyEngineForce(3000.0f);
+			impulseActivated = false;
+		}
+		else vehicle[App->network->clientIndex]->ApplyEngineForce(acceleration[App->network->clientIndex]);
 		vehicle[App->network->clientIndex]->Turn(turn[App->network->clientIndex]);
 		vehicle[App->network->clientIndex]->Brake(brake[App->network->clientIndex]);
 
@@ -125,9 +130,10 @@ update_status ModulePlayer::Update(float dt)
 
 void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
-	// Randomly teleport the sensor cube around 1st quadrant
-	if (body1 == App->scene_intro->sensor_cube)	body1->SetPos(20 * rand() / RAND_MAX, 3, 20 * rand() / RAND_MAX);
-	if (body2 == App->scene_intro->sensor_cube)	body2->SetPos(20 * rand() / RAND_MAX, 3, 20 * rand() / RAND_MAX);
+	if (body1 == App->scene_intro->sensor_cube || body2 == App->scene_intro->sensor_cube)
+	{
+		impulseActivated = true;
+	}
 }
 
 void ModulePlayer::CreateCar(int carIndex)

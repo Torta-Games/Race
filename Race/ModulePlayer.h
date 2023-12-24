@@ -35,5 +35,5 @@ public:
 	bool down[2] = { false, false };
 	bool left[2] = { false, false };
 	bool right[2] = { false, false };
-
+	bool impulseActivated = false;
 };
