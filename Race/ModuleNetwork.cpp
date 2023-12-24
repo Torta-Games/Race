@@ -29,12 +29,16 @@ bool ModuleNetwork::CleanUp()
 update_status ModuleNetwork::Update(float dt)
 {
 	
-	if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN || optionsIndex == 1) 
+	{
+		optionsIndex = 0;
 		multiplayer = true;
 		CreateServer();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN || optionsIndex == 2) 
+	{
+		optionsIndex = 0;
 		multiplayer = true;
 		printf("Enter the host IP: ");
 		char buffer[100];
@@ -50,7 +54,9 @@ update_status ModuleNetwork::Update(float dt)
 		CreateClient();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN || optionsIndex == 3) 
+	{
+		optionsIndex = 0;
 		if (multiplayer) StartGame();
 		else
 		{
@@ -113,12 +119,13 @@ update_status ModuleNetwork::Update(float dt)
 		{
 			// send messages
 			char text[10000];
-			sprintf_s(text, "%d,%d,%d,%d,%d",
+			sprintf_s(text, "%d,%d,%d,%d,%d,%d",
 				clientIndex,
 				App->player->up[clientIndex],
 				App->player->down[clientIndex],
 				App->player->left[clientIndex],
-				App->player->right[clientIndex]);
+				App->player->right[clientIndex],
+				App->player->impulseActivated[clientIndex]);
 
 			int messageLength = strlen(text) + 1;
 
@@ -135,14 +142,15 @@ update_status ModuleNetwork::Update(float dt)
 				printf("Stats: %s\n", text);
 
 				int newClientIndex;
-				int up, down, left, right;
+				int up, down, left, right, impulse;
 
-				sscanf_s(text, "%d,%d,%d,%d,%d", &newClientIndex, &up, &down, &left, &right);
+				sscanf_s(text, "%d,%d,%d,%d,%d,%d", &newClientIndex, &up, &down, &left, &right, &impulse);
 
 				App->player->up[newClientIndex] = up;
 				App->player->down[newClientIndex] = down;
 				App->player->left[newClientIndex] = left;
 				App->player->right[newClientIndex] = right;
+				App->player->impulseActivated[newClientIndex] = impulse;
 			}
 		}
 	}
@@ -213,9 +221,12 @@ void ModuleNetwork::StartGame()
 
 void ModuleNetwork::OnGameStart()
 {
+	App->renderer3D->Enable();
 	App->scene_intro->Enable();
 	App->player->Enable();
 	App->camera->Enable();
+	App->menu->Disable();
+	App->renderer->Disable();
 
 	for (int i = 0; i < clientsCount; i++)
 	{

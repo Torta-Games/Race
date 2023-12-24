@@ -26,6 +26,10 @@ public:
 
 	//The surface contained by the window
 	SDL_Surface* screen_surface;
+
+	int maxScreenWidth = 0;
+	int maxScreenHeight = 0;
+	SDL_DisplayMode DM;
 };
 
 #endif // __ModuleWindow_H__

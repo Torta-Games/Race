@@ -13,6 +13,9 @@
 #include "ModulePhysics3D.h"
 #include "ModulePlayer.h"
 #include "ModuleNetwork.h"
+#include "ModuleMenu.h"
+#include "ModuleTextures.h"
+#include "ModuleRender.h"
 
 class Application
 {
@@ -26,6 +29,9 @@ public:
 	ModulePhysics3D* physics;
 	ModulePlayer* player;
 	ModuleNetwork* network;
+	ModuleMenu* menu;
+	ModuleTextures* textures;
+	ModuleRender* renderer;
 
 private:
 

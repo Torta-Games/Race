@@ -44,4 +44,6 @@ public:
 	bool waitingForStart = false;
 	bool serverHost = false;
 	bool multiplayer = false;
+
+	int optionsIndex = 0;
 };

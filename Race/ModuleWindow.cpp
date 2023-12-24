@@ -55,7 +55,10 @@ bool ModuleWindow::Init()
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
 
-		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+		SDL_DisplayMode DM;
+		SDL_GetDesktopDisplayMode(0, &DM);
+
+		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, DM.w, DM.h, flags);
 
 		if(window == NULL)
 		{
@@ -66,6 +69,7 @@ bool ModuleWindow::Init()
 		{
 			//Get window surface
 			screen_surface = SDL_GetWindowSurface(window);
+			SDL_MaximizeWindow(window);
 		}
 	}
 

@@ -32,6 +32,7 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
+	myCar = App->network->clientIndex;
 
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && carCount < 2)
 	{
@@ -42,7 +43,7 @@ update_status ModulePlayer::Update(float dt)
 	{
 		for (int currentCar = 0; currentCar < carCount; currentCar++)
 		{
-			if (currentCar != App->network->clientIndex)
+			if (currentCar != myCar)
 			{
 				turn[currentCar] = acceleration[currentCar] = brake[currentCar] = 0.0f;
 
@@ -68,7 +69,12 @@ update_status ModulePlayer::Update(float dt)
 					brake[currentCar] = BRAKE_POWER;
 				}
 
-				vehicle[currentCar]->ApplyEngineForce(acceleration[currentCar]);
+				if (impulseActivated[currentCar])
+				{
+					vehicle[currentCar]->ApplyEngineForce(3000.0f);
+					impulseActivated[currentCar] = false;
+				}
+				else vehicle[currentCar]->ApplyEngineForce(acceleration[currentCar]);
 				vehicle[currentCar]->Turn(turn[currentCar]);
 				vehicle[currentCar]->Brake(brake[currentCar]);
 
@@ -76,51 +82,51 @@ update_status ModulePlayer::Update(float dt)
 			}
 		}
 
-		turn[App->network->clientIndex] = acceleration[App->network->clientIndex] = brake[App->network->clientIndex] = 0.0f;
+		turn[myCar] = acceleration[myCar] = brake[myCar] = 0.0f;
 
 		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		{
-			acceleration[App->network->clientIndex] = MAX_ACCELERATION;
-			up[App->network->clientIndex] = true;
+			acceleration[myCar] = MAX_ACCELERATION;
+			up[myCar] = true;
 		}
-		else up[App->network->clientIndex] = false;
+		else up[myCar] = false;
 
 		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 		{
-			if (turn[App->network->clientIndex] < TURN_DEGREES)
-				turn[App->network->clientIndex] += TURN_DEGREES;
-			left[App->network->clientIndex] = true;
+			if (turn[myCar] < TURN_DEGREES)
+				turn[myCar] += TURN_DEGREES;
+			left[myCar] = true;
 		}
-		else left[App->network->clientIndex] = false;
+		else left[myCar] = false;
 
 		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		{
-			if (turn[App->network->clientIndex] > -TURN_DEGREES)
-				turn[App->network->clientIndex] -= TURN_DEGREES;
-			right[App->network->clientIndex] = true;
+			if (turn[myCar] > -TURN_DEGREES)
+				turn[myCar] -= TURN_DEGREES;
+			right[myCar] = true;
 		}
-		else right[App->network->clientIndex] = false;
+		else right[myCar] = false;
 
 		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 		{
-			brake[App->network->clientIndex] = BRAKE_POWER;
-			down[App->network->clientIndex] = true;
+			brake[myCar] = BRAKE_POWER;
+			down[myCar] = true;
 		}
-		else down[App->network->clientIndex] = false;
+		else down[myCar] = false;
 
-		if (impulseActivated)
+		if (impulseActivated[myCar])
 		{
-			vehicle[App->network->clientIndex]->ApplyEngineForce(3000.0f);
-			impulseActivated = false;
+			vehicle[myCar]->ApplyEngineForce(3000.0f);
+			impulseActivated[myCar] = false;
 		}
-		else vehicle[App->network->clientIndex]->ApplyEngineForce(acceleration[App->network->clientIndex]);
-		vehicle[App->network->clientIndex]->Turn(turn[App->network->clientIndex]);
-		vehicle[App->network->clientIndex]->Brake(brake[App->network->clientIndex]);
+		else vehicle[myCar]->ApplyEngineForce(acceleration[myCar]);
+		vehicle[myCar]->Turn(turn[myCar]);
+		vehicle[myCar]->Brake(brake[myCar]);
 
-		vehicle[App->network->clientIndex]->Render();
+		vehicle[myCar]->Render();
 
 		char title[80];
-		sprintf_s(title, "%.1f Km/h", vehicle[App->network->clientIndex]->GetKmh());
+		sprintf_s(title, "%.1f Km/h", vehicle[myCar]->GetKmh());
 		App->window->SetTitle(title);
 	}
 
@@ -132,7 +138,14 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
 	if (body1 == App->scene_intro->sensor_cube || body2 == App->scene_intro->sensor_cube)
 	{
-		impulseActivated = true;
+		for (int currentCar = 0; currentCar < carCount; currentCar++)
+		{
+			if (currentCar != myCar)
+			{
+				if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar]) impulseActivated[currentCar] = true;
+			}
+			else impulseActivated[myCar] = true;
+		}
 	}
 }
 

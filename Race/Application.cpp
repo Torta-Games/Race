@@ -6,11 +6,14 @@ Application::Application()
 	input = new ModuleInput(this);
 	audio = new ModuleAudio(this, true);
 	scene_intro = new ModuleSceneIntro(this, false);
-	renderer3D = new ModuleRenderer3D(this);
+	renderer3D = new ModuleRenderer3D(this, false);
 	camera = new ModuleCamera3D(this, false);
 	physics = new ModulePhysics3D(this);
 	player = new ModulePlayer(this, false);
 	network = new ModuleNetwork(this);
+	menu = new ModuleMenu(this);
+	renderer = new ModuleRender(this);
+	textures = new ModuleTextures(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -18,6 +21,8 @@ Application::Application()
 
 	// Main Modules
 	AddModule(window);
+	AddModule(renderer);
+	AddModule(textures);
 	AddModule(camera);
 	AddModule(input);
 	AddModule(audio);
@@ -25,6 +30,7 @@ Application::Application()
 	AddModule(physics);
 	
 	// Scenes
+	AddModule(menu);
 	AddModule(scene_intro);
 	AddModule(player);
 
