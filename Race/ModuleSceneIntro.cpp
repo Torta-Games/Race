@@ -25,6 +25,17 @@ bool ModuleSceneIntro::Start()
 	sensor_cube->SetAsSensor(true);
 	sensor_cube->SetPos(0, 3, 0);
 
+	coin = Cylinder(1.0f, 0.5f);
+	coin.SetPos(0, 3, 30);
+	coin.color = Yellow;
+
+	platform = Cube(10, 1, 30);
+	platform.SetPos(0, 1, 20);
+	platform.color = White;
+
+	physBody = App->physics->AddBody(platform, 0.0f);
+	platform.physbody = physBody;
+
 	return ret;
 }
 
@@ -42,6 +53,12 @@ update_status ModuleSceneIntro::Update(float dt)
 	Plane p(0, 1, 0, 0);
 	p.axis = true;
 	p.Render();
+
+	angle++;
+	coin.SetRotation(angle, vec3(0, 1, 0));
+	coin.Render();
+
+	platform.Render();
 
 	return UPDATE_CONTINUE;
 }

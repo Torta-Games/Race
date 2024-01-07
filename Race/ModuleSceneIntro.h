@@ -44,4 +44,10 @@ public:
 
 
 	PhysBody3D* sensor_cube;
+	Cylinder coin;
+	Cube platform;
+
+	PhysBody3D* physBody;
+
+	float angle = 0.0f;
 };
