@@ -1,0 +1,39 @@
+import bpy
+
+output_path = r"C:\Users\alejandroir2\Desktop\coords.txt"
+
+def get_object_color(obj):
+    color = (1.0, 1.0, 1.0)
+    
+    if obj.material_slots:
+        material = obj.material_slots[0].material
+        if material:
+            if material.use_nodes:
+
+                principled_node = material.node_tree.nodes.get("Principled BSDF")
+                if principled_node:
+                    color = principled_node.inputs["Base Color"].default_value[:3]
+    
+    return color
+
+with open(output_path, "w") as file:
+    for obj in bpy.context.scene.objects:
+        mat = obj.matrix_world
+        loc = mat.translation * 1
+        loc.x *= -1
+        
+        rot = mat.to_euler('XYZ')
+        scale = obj.scale * 1
+        
+        obj_color = get_object_color(obj)
+        
+        output_line = (
+            f'CreateCube('
+            f'vec3({scale.x:.2f}f, {scale.z:.2f}f, {scale.y:.2f}f), '
+            f'vec3({loc.x:.2f}f, {loc.z:.2f}f, {loc.y:.2f}f), '
+            f'vec3({rot.x:.2f}f, {rot.z:.2f}f, {rot.y:.2f}f), '
+            f'Color({obj_color[0]:.2f}f, {obj_color[1]:.2f}f, {obj_color[2]:.2f}f));'
+        )
+        
+        print(output_line)
+        file.write(output_line + "\n")

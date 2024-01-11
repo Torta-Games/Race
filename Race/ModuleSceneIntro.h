@@ -3,6 +3,8 @@
 #include "p2DynArray.h"
 #include "Globals.h"
 #include "Primitive.h"
+#include <vector>
+using namespace std;
 
 #define MAX_SNAKE 2
 
@@ -20,6 +22,8 @@ public:
 	bool CleanUp();
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
+
+	void CreateCube(vec3 size, vec3 position, vec3 rotation, Color color);
 
 public:
 	/*
@@ -48,6 +52,8 @@ public:
 	Cube platform;
 
 	PhysBody3D* physBody;
+
+	vector<Cube> cubes;
 
 	float angle = 0.0f;
 };
