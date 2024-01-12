@@ -8,6 +8,7 @@ struct PhysVehicle3D;
 #define MAX_ACCELERATION 1000.0f
 #define TURN_DEGREES 15.0f * DEGTORAD
 #define BRAKE_POWER 1000.0f
+#define MAX_TURBO_SPEED 200.0f
 
 class ModulePlayer : public Module
 {
@@ -39,6 +40,8 @@ public:
 	bool impulseActivated[2] = { false, false};
 	int myCar = 0;
 	int engine0, engine1, engine2, engine3, engine4, engine5, engine6;
+	int nitro;
+	bool turboFxPlayed = false;
 	float currentCarSpeed;
 
 };

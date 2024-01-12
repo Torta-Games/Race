@@ -24,7 +24,8 @@ bool ModulePlayer::Start()
 	engine3 = App->audio->LoadFx("Assets/engine3_fx.wav");
 	engine4 = App->audio->LoadFx("Assets/engine4_fx.wav");
 	engine5 = App->audio->LoadFx("Assets/engine5_fx.wav");
-	engine6 = App->audio->LoadFx("Assets/engine6_fx.wav")
+	engine6 = App->audio->LoadFx("Assets/engine6_fx.wav");
+	nitro = App->audio->LoadFx("Assets/nitro_fx.wav");
 ;
 	return true;
 }
@@ -168,6 +169,20 @@ update_status ModulePlayer::Update(float dt)
 		{
 			acceleration[myCar] = MAX_ACCELERATION;
 			up[myCar] = true;
+			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
+				if (currentCarSpeed < MAX_TURBO_SPEED) {
+					acceleration[myCar] = MAX_ACCELERATION * 4;
+					if (turboFxPlayed == false) {
+						App->audio->PlayFx(nitro);
+						turboFxPlayed = true;
+					}
+					else
+					{
+						turboFxPlayed = false;
+					}
+				}
+			}
+
 		}
 		else up[myCar] = false;
 
