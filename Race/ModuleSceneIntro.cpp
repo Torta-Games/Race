@@ -37,32 +37,32 @@ bool ModuleSceneIntro::Start()
 	physBody = App->physics->AddBody(platform, 0.0f);
 	platform.physbody = physBody;
 	
-	CreateCube(vec3(17.05f, 2.00f, 71.41f), vec3(182.33f, -0.45f, 13.25f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 250.44f), vec3(48.59f, -0.45f, 57.48f), vec3(-0.00f, 1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 102.50f), vec3(-85.15f, -0.45f, -2.30f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 92.22f), vec3(-30.52f, -0.45f, -62.07f), vec3(-0.00f, 1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 1.86f, 17.44f), vec3(17.38f, 1.89f, -62.07f), vec3(-0.38f, 1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 1.86f, 17.44f), vec3(61.47f, 1.89f, -62.07f), vec3(-0.38f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 65.11f), vec3(99.59f, -0.45f, -62.07f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 85.20f), vec3(89.53f, -0.45f, -99.70f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 20.58f), vec3(140.66f, -0.45f, -80.89f), vec3(-0.00f, 3.14f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 90.06f), vec3(38.41f, -0.45f, -46.15f), vec3(-0.00f, 3.14f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 98.24f), vec3(124.69f, -0.45f, -30.98f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.36f, 38.92f), vec3(69.14f, 3.27f, -30.98f), vec3(-0.38f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.36f, 38.92f), vec3(1.93f, 3.26f, -30.98f), vec3(-0.38f, 1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 33.01f), vec3(-19.92f, -0.45f, -30.97f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 49.27f), vec3(5.25f, -0.45f, 7.41f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 21.34f), vec3(-27.90f, -0.45f, -11.78f), vec3(-0.00f, 3.14f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.30f, 31.97f), vec3(35.53f, 10.45f, -30.98f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(182.33f, -0.45f, -30.98f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(182.33f, -0.45f, 57.48f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(-85.15f, -0.45f, 57.48f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(-85.15f, -0.45f, -62.07f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(140.66f, -0.45f, -62.07f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(140.66f, -0.45f, -99.70f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(38.41f, -0.45f, -99.70f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(38.41f, -0.45f, 7.41f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(-27.90f, -0.45f, 7.41f), vec3(-0.00f, -1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(17.05f, 2.00f, 71.41f), vec3(182.33f, -0.45f, 13.25f), vec3(-0.00f, 0.00f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 250.44f), vec3(48.59f, -0.45f, 57.48f), vec3(-0.00f, 1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 102.50f), vec3(-85.15f, -0.45f, -2.30f), vec3(-0.00f, 0.00f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 92.22f), vec3(-30.52f, -0.45f, -62.07f), vec3(-0.00f, 1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 1.86f, 17.44f), vec3(17.38f, 1.89f, -62.07f), vec3(-0.38f, 1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 1.86f, 17.44f), vec3(61.47f, 1.89f, -62.07f), vec3(-0.38f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 65.11f), vec3(99.59f, -0.45f, -62.07f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 85.20f), vec3(89.53f, -0.45f, -99.70f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 20.58f), vec3(140.66f, -0.45f, -80.89f), vec3(-0.00f, 3.14f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 90.06f), vec3(38.41f, -0.45f, -46.15f), vec3(-0.00f, 3.14f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 98.24f), vec3(124.69f, -0.45f, -30.98f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.36f, 38.92f), vec3(69.14f, 3.27f, -30.98f), vec3(-0.38f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.36f, 38.92f), vec3(1.93f, 3.26f, -30.98f), vec3(-0.38f, 1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 33.01f), vec3(-19.92f, -0.45f, -30.97f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 49.27f), vec3(5.25f, -0.45f, 7.41f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 21.34f), vec3(-27.90f, -0.45f, -11.78f), vec3(-0.00f, 3.14f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.30f, 31.97f), vec3(35.53f, 10.45f, -30.98f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(182.33f, -0.45f, -30.98f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(182.33f, -0.45f, 57.48f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(-85.15f, -0.45f, 57.48f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(-85.15f, -0.45f, -62.07f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(140.66f, -0.45f, -62.07f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(140.66f, -0.45f, -99.70f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(38.41f, -0.45f, -99.70f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(38.41f, -0.45f, 7.41f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
+	CreateCube(vec3(17.05f, 2.00f, 17.05f), vec3(-27.90f, -0.45f, 7.41f), vec3(-0.00f, -1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
 	CreateCube(vec3(332.65f, 1.08f, 449.65f), vec3(37.22f, -1.99f, -21.03f), vec3(-0.00f, 1.57f, -0.00f), Color(0.02f, 0.80f, 0.00f));
 	CreateCube(vec3(1.61f, 8.66f, 250.44f), vec3(48.59f, -3.00f, 66.80f), vec3(-0.00f, 1.57f, -0.00f), Color(0.82f, 0.81f, 0.79f));
 	CreateCube(vec3(1.61f, 8.66f, 71.42f), vec3(191.59f, -3.00f, 13.25f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
@@ -106,27 +106,28 @@ bool ModuleSceneIntro::Start()
 	CreateCube(vec3(1.61f, 8.66f, 90.06f), vec3(47.74f, -3.00f, -46.15f), vec3(-0.00f, 3.14f, -0.00f), Color(0.82f, 0.81f, 0.79f));
 	CreateCube(vec3(1.61f, 8.66f, 90.06f), vec3(29.08f, -3.00f, -46.15f), vec3(-0.00f, 3.14f, -0.00f), Color(0.82f, 0.81f, 0.79f));
 	CreateCube(vec3(1.61f, 8.66f, 17.03f), vec3(-37.23f, -1.69f, -9.51f), vec3(-0.00f, -3.14f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(2.34f, 25.70f, 2.34f), vec3(-73.27f, 11.38f, -2.30f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(2.34f, 25.70f, 2.34f), vec3(-97.14f, 11.38f, -2.30f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(21.52f, 7.35f, 2.34f), vec3(-85.20f, 19.74f, -2.30f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.01f, 0.00f));
-	CreateCube(vec3(0.90f, 4.21f, 0.65f), vec3(-77.72f, 20.04f, -3.59f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 1.68f, 0.60f), vec3(-79.02f, 21.73f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 0.84f, 0.60f), vec3(-80.28f, 20.88f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 1.68f, 0.60f), vec3(-79.02f, 20.04f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 0.84f, 0.60f), vec3(-79.44f, 19.20f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 0.84f, 0.60f), vec3(-80.28f, 18.36f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.90f, 3.37f, 0.65f), vec3(-82.22f, 19.63f, -3.59f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(2.34f, 25.70f, 2.34f), vec3(-73.27f, 5.19f, -2.30f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(2.34f, 25.70f, 2.34f), vec3(-97.14f, 5.19f, -2.30f), vec3(-0.00f, 0.00f, -0.00f), Color(1.00f, 0.99f, 0.96f));
+	CreateCube(vec3(21.52f, 7.35f, 2.34f), vec3(-85.20f, 13.55f, -2.30f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.01f, 0.00f));
+	CreateCube(vec3(0.90f, 4.21f, 0.65f), vec3(-77.72f, 13.86f, -3.59f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 1.68f, 0.60f), vec3(-79.02f, 15.54f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 0.84f, 0.60f), vec3(-80.28f, 14.70f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 1.68f, 0.60f), vec3(-79.02f, 13.85f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 0.84f, 0.60f), vec3(-79.44f, 13.01f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 0.84f, 0.60f), vec3(-80.28f, 12.17f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.90f, 3.37f, 0.65f), vec3(-82.22f, 13.44f, -3.59f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
 	CreateCube(vec3(17.29f, 0.04f, 1.41f), vec3(-85.20f, 0.59f, -2.32f), vec3(-3.14f, 0.00f, -0.00f), Color(0.82f, 0.01f, 0.00f));
-	CreateCube(vec3(0.90f, 3.37f, 0.65f), vec3(-84.81f, 19.63f, -3.59f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 1.68f, 0.60f), vec3(-83.52f, 21.73f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 1.68f, 0.60f), vec3(-83.51f, 20.04f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 2.52f, 0.60f), vec3(-88.27f, 21.73f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 2.52f, 0.60f), vec3(-88.27f, 18.36f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 2.52f, 0.60f), vec3(-86.59f, 20.04f, -3.59f), vec3(0.00f, -0.00f, 3.14f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.90f, 4.21f, 0.65f), vec3(-90.97f, 20.04f, -3.59f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 2.52f, 0.60f), vec3(-92.68f, 21.73f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 1.68f, 0.60f), vec3(-92.26f, 20.04f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
-	CreateCube(vec3(0.84f, 2.52f, 0.60f), vec3(-92.68f, 18.36f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.90f, 3.37f, 0.65f), vec3(-84.81f, 13.44f, -3.59f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 1.68f, 0.60f), vec3(-83.52f, 15.54f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 1.68f, 0.60f), vec3(-83.51f, 13.85f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 2.52f, 0.60f), vec3(-88.27f, 15.54f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 2.52f, 0.60f), vec3(-88.27f, 12.17f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 2.52f, 0.60f), vec3(-86.59f, 13.85f, -3.59f), vec3(0.00f, -0.00f, 3.14f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.90f, 4.21f, 0.65f), vec3(-90.97f, 13.86f, -3.59f), vec3(-0.00f, 0.00f, -0.00f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 2.52f, 0.60f), vec3(-92.68f, 15.54f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 1.68f, 0.60f), vec3(-92.26f, 13.85f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+	CreateCube(vec3(0.84f, 2.52f, 0.60f), vec3(-92.68f, 12.17f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
+
 
 
 
@@ -144,9 +145,9 @@ bool ModuleSceneIntro::CleanUp()
 // Update
 update_status ModuleSceneIntro::Update(float dt)
 {
-	Plane p(0, 1, 0, 0);
-	p.axis = true;
-	p.Render();
+	//Plane p(0, 1, 0, 0);
+	//p.axis = true;
+	//p.Render();
 
 	angle++;
 	coin.SetRotation(angle, vec3(0, 1, 0));

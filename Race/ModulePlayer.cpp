@@ -139,6 +139,11 @@ update_status ModulePlayer::Update(float dt)
 						turn[currentCar] -= TURN_DEGREES;
 				}
 
+				if (reverse[currentCar])
+				{
+					acceleration[currentCar] = -MAX_ACCELERATION;
+				}
+
 				if (down[currentCar])
 				{
 					brake[currentCar] = BRAKE_POWER;
@@ -159,14 +164,14 @@ update_status ModulePlayer::Update(float dt)
 
 		turn[myCar] = acceleration[myCar] = brake[myCar] = 0.0f;
 
-		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 		{
 			acceleration[myCar] = MAX_ACCELERATION;
 			up[myCar] = true;
 		}
 		else up[myCar] = false;
 
-		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
 			if (turn[myCar] < TURN_DEGREES)
 				turn[myCar] += TURN_DEGREES;
@@ -174,7 +179,7 @@ update_status ModulePlayer::Update(float dt)
 		}
 		else left[myCar] = false;
 
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
 			if (turn[myCar] > -TURN_DEGREES)
 				turn[myCar] -= TURN_DEGREES;
@@ -182,7 +187,14 @@ update_status ModulePlayer::Update(float dt)
 		}
 		else right[myCar] = false;
 
-		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+		{
+			acceleration[myCar] = -MAX_ACCELERATION;
+			reverse[myCar] = true;
+		}
+		else up[myCar] = false;
+
+		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT)
 		{
 			brake[myCar] = BRAKE_POWER;
 			down[myCar] = true;
@@ -198,10 +210,19 @@ update_status ModulePlayer::Update(float dt)
 		vehicle[myCar]->Turn(turn[myCar]);
 		vehicle[myCar]->Brake(brake[myCar]);
 
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT)
+		{
+			vehicle[myCar]->info.mass -= 1;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT)
+		{
+			vehicle[myCar]->info.mass += 1;
+		}
+
 		vehicle[myCar]->Render();
 
 		char title[80];
-		sprintf_s(title, "%.1f Km/h", vehicle[myCar]->GetKmh());
+		sprintf_s(title, "%.1f Km/h %.1f Mass", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass);
 		App->window->SetTitle(title);
 	}
 
@@ -233,8 +254,8 @@ void ModulePlayer::CreateCar(int carIndex)
 	VehicleInfo car;
 
 	// Car properties ----------------------------------------
-	car.chassis_size.Set(2, 2, 4);
-	car.chassis_offset.Set(0, 1.5, 0);
+	car.chassis_size.Set(2, 1.5, 4);
+	car.chassis_offset.Set(0, 1, 0);
 	car.mass = 500.0f;
 	car.suspensionStiffness = 15.88f;
 	car.suspensionCompression = 0.83f;
@@ -254,7 +275,7 @@ void ModulePlayer::CreateCar(int carIndex)
 
 	// Don't change anything below this line ------------------
 
-	float half_width = car.chassis_size.x * 0.5f;
+	float half_width = car.chassis_size.x * 0.7f;
 	float half_length = car.chassis_size.z * 0.5f;
 
 	vec3 direction(0, -1, 0);

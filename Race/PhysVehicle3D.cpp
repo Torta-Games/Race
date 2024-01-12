@@ -47,7 +47,7 @@ void PhysVehicle3D::Render()
 	chassis.transform.M[12] += offset.getX();
 	chassis.transform.M[13] += offset.getY();
 	chassis.transform.M[14] += offset.getZ();
-
+	chassis.color = Color(1.0f, 1.0f, 0.0f, 1.0f);
 
 	chassis.Render();
 }
