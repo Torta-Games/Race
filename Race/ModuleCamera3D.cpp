@@ -99,13 +99,16 @@ update_status ModuleCamera3D::Update(float dt)
 	}
 	else
 	{
+		float carSpeed = App->player->vehicle[App->network->clientIndex]->vehicle->getCurrentSpeedKmHour();
+
 		const btVector3& chassisPos = App->player->vehicle[App->network->clientIndex]->vehicle->getChassisWorldTransform().getOrigin();
 		vec3 carPos(chassisPos.getX(), chassisPos.getY(), chassisPos.getZ());
 
 		const btVector3& rearOffset3 = App->player->vehicle[App->network->clientIndex]->vehicle->getForwardVector();
 		vec3 rearOffset(rearOffset3.getX(), rearOffset3.getY(), rearOffset3.getZ());
 
-		Position = carPos - rearOffset * 10.0f + vec3(0.0f, 5.0f, 0.0f);
+		float scaleFactor = 1.0f + carSpeed * 0.01f;
+		Position = carPos - rearOffset * 10.0f * scaleFactor + vec3(0.0f, 5.0f * scaleFactor, 0.0f);
 		LookAt(carPos);
 	}
 
