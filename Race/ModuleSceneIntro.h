@@ -56,4 +56,7 @@ public:
 	vector<Cube> cubes;
 
 	float angle = 0.0f;
+
+	Cube* rotatingCube[2];
+	float rotationAngle[2];
 };

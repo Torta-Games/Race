@@ -128,9 +128,16 @@ bool ModuleSceneIntro::Start()
 	CreateCube(vec3(0.84f, 1.68f, 0.60f), vec3(-92.26f, 13.85f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
 	CreateCube(vec3(0.84f, 2.52f, 0.60f), vec3(-92.68f, 12.17f, -3.59f), vec3(0.00f, 0.00f, 1.57f), Color(0.82f, 0.81f, 0.79f));
 
+	rotatingCube[0] = new Cube(1.61f, 2.66f, 45.05f);  
+	rotatingCube[0]->SetPos(-94.48f, 1.33, 66.80f); 
+	rotatingCube[0]->color = Red;  
+	rotationAngle[0] = 0.0f;
 
-
-
+	rotatingCube[1] = new Cube(1.61f, 2.66f, 45.05f);  
+	rotatingCube[1]->SetPos(191.58f, 1.33, 66.80f); 
+	rotatingCube[1]->color = Red;  
+	rotationAngle[1] = 0.0f;
+	
 	return ret;
 }
 
@@ -148,11 +155,17 @@ update_status ModuleSceneIntro::Update(float dt)
 	//Plane p(0, 1, 0, 0);
 	//p.axis = true;
 	//p.Render();
-
+	
+	for (int i = 0; i < 2; i++)
+	{
+	rotationAngle[i] -= dt*100;  
+	rotatingCube[i]->SetRotation(rotationAngle[i], vec3(0, 1, 0));  
+	rotatingCube[i]->Render(); 
+	}
+	
 	angle++;
 	coin.SetRotation(angle, vec3(0, 1, 0));
 	coin.Render();
-
 	platform.Render();
 
 	for ( auto& cube : cubes)
