@@ -17,7 +17,15 @@ ModulePlayer::~ModulePlayer()
 bool ModulePlayer::Start()
 {
 	LOG("Loading player");
-
+	App->audio->Init();
+	engine0 = App->audio->LoadFx("Assets/engine0_fx.wav");
+	engine1 = App->audio->LoadFx("Assets/engine1_fx.wav");
+	engine2 = App->audio->LoadFx("Assets/engine2_fx.wav");
+	engine3 = App->audio->LoadFx("Assets/engine3_fx.wav");
+	engine4 = App->audio->LoadFx("Assets/engine4_fx.wav");
+	engine5 = App->audio->LoadFx("Assets/engine5_fx.wav");
+	engine6 = App->audio->LoadFx("Assets/engine6_fx.wav")
+;
 	return true;
 }
 
@@ -25,14 +33,81 @@ bool ModulePlayer::Start()
 bool ModulePlayer::CleanUp()
 {
 	LOG("Unloading player");
-
+	App->audio->CleanUp();
 	return true;
 }
 
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
+	static int lastSpeedRange = -1;
+
 	myCar = App->network->clientIndex;
+	currentCarSpeed = vehicle[myCar]->GetKmh();
+
+	    int currentSpeedRange;
+
+    if (currentCarSpeed < 5)
+    {
+        currentSpeedRange = 0;
+    }
+    else if (currentCarSpeed < 10)
+    {
+        currentSpeedRange = 1;
+    }
+    else if (currentCarSpeed < 20)
+    {
+        currentSpeedRange = 2;
+    }
+    else if (currentCarSpeed < 40)
+    {
+        currentSpeedRange = 3;
+    }
+    else if (currentCarSpeed < 60)
+    {
+        currentSpeedRange = 4;
+    }
+    else if (currentCarSpeed < 80)
+    {
+        currentSpeedRange = 5;
+    }
+    else
+    {
+        currentSpeedRange = 6;
+    }
+
+
+    if (currentSpeedRange != lastSpeedRange)
+    {
+        Mix_HaltChannel(-1);
+
+        switch (currentSpeedRange)
+        {
+            case 0:
+                App->audio->PlayFx(engine0, -1, 0);
+                break;
+            case 1:
+                App->audio->PlayFx(engine1, -1, 1);
+                break;
+            case 2:
+                App->audio->PlayFx(engine2, -1, 2);
+                break;
+            case 3:
+                App->audio->PlayFx(engine3, -1, 3);
+                break;
+            case 4:
+                App->audio->PlayFx(engine4, -1, 4);
+                break;
+            case 5:
+                App->audio->PlayFx(engine5, -1, 5);
+                break;
+            case 6:
+                App->audio->PlayFx(engine6, -1, 6);
+                break;
+        }
+
+        lastSpeedRange = currentSpeedRange;
+    }
 
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && carCount < 2)
 	{

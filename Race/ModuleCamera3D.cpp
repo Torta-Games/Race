@@ -100,6 +100,8 @@ update_status ModuleCamera3D::Update(float dt)
 	else
 	{
 		float carSpeed = App->player->vehicle[App->network->clientIndex]->vehicle->getCurrentSpeedKmHour();
+		//btVector3 carAngularVelocity = App->player->vehicle[App->network->clientIndex]->vehicle->getRigidBody()->getAngularVelocity();
+		//float carAngularSpeed = carAngularVelocity.getY();
 
 		const btVector3& chassisPos = App->player->vehicle[App->network->clientIndex]->vehicle->getChassisWorldTransform().getOrigin();
 		vec3 carPos(chassisPos.getX(), chassisPos.getY(), chassisPos.getZ());
@@ -109,6 +111,8 @@ update_status ModuleCamera3D::Update(float dt)
 
 		float scaleFactor = 1.0f + carSpeed * 0.01f;
 		Position = carPos - rearOffset * 10.0f * scaleFactor + vec3(0.0f, 5.0f * scaleFactor, 0.0f);
+
+		//Position = mix(Position, targetPosition, smoothingFactor);
 		LookAt(carPos);
 	}
 

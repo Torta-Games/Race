@@ -37,4 +37,7 @@ public:
 	bool right[2] = { false, false };
 	bool impulseActivated[2] = { false, false};
 	int myCar = 0;
+	int engine0, engine1, engine2, engine3, engine4, engine5, engine6;
+	float currentCarSpeed;
+
 };
