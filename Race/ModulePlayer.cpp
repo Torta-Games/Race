@@ -32,7 +32,7 @@ bool ModulePlayer::Start()
 	detectionCubeBody = App->physics->AddBody(*detectionCube, 0.0f);
 	detectionCube->color = Color(1,0,0,0.1f);
 	detectionCubeBody->SetAsSensor(true);
-	
+
 	return true;
 }
 
@@ -47,10 +47,8 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
-
 	btVector3 position = vehicle[myCar]->vehicle->getRigidBody()->getWorldTransform().getOrigin();
 	detectionCube->SetPos(position.x(), position.y()+0.3f, position.z());
-	detectionCubeBody->SetPos(position.x(), position.y() + 0.3f, position.z());
 	static int lastSpeedRange = -1;
 
 	myCar = App->network->clientIndex;
@@ -176,25 +174,11 @@ update_status ModulePlayer::Update(float dt)
 
 		turn[myCar] = acceleration[myCar] = brake[myCar] = 0.0f;
 
-		if (App->input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT && currentCarSpeed > 0)
-		{
-			acceleration[myCar] = - (currentCarSpeed* vehicle[myCar]->info.frictionSlip);
-		}
-
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 		{
-			if (touchingSand) {
-				maxSpeed = 40;
-			}
-			else
-			{
-				maxSpeed = MAX_SPEED;
-			}
-
-
-			if(vehicle[myCar]->GetKmh() < maxSpeed)	acceleration[myCar] = MAX_ACCELERATION;
+			if(vehicle[myCar]->GetKmh() < MAX_SPEED)	acceleration[myCar] = MAX_ACCELERATION;
 			up[myCar] = true;
-			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT && !touchingSand) {
+			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
 				if (currentCarSpeed < MAX_TURBO_SPEED) {
 					acceleration[myCar] = MAX_ACCELERATION * 6;
 					if (turboFxPlayed == false) {
@@ -261,42 +245,29 @@ update_status ModulePlayer::Update(float dt)
 // Car friction change
 		if (App->input->GetKey(SDL_SCANCODE_H) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_H) == KEY_REPEAT)
 		{
-			vehicle[myCar]->info.frictionSlip = 100;
+			vehicle[myCar]->info.frictionSlip = 1000;
 			for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
        	 	{
-            vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 5000;
+            vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 100;
         	}
 		}
 		else
 		{
-			vehicle[myCar]->info.frictionSlip = 5;
+			vehicle[myCar]->info.frictionSlip = 50.5;
 			for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
        	 	{
             vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 50.5;
         	}
 		}
-//Gravity modifier
-		if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN)
-		{
-			App->physics->ModifyGravity({ 0, -5, 0 });
-		}
-		if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
-		{
-			App->physics->ModifyGravity({ 0, +5, 0 });
-		}
 
-
-		if (touchingSand) {
-			vehicle[myCar]->info.frictionSlip = 100;
-			if (currentCarSpeed >= 39) vehicle[myCar]->ApplyEngineForce(-1000.0f);
-		}
-		else vehicle[myCar]->info.frictionSlip = 10;
+		if(touchingSand) vehicle[myCar]->info.frictionSlip = 1000;
+		else vehicle[myCar]->info.frictionSlip = 50.5;
 
 		vehicle[myCar]->Render();
-		//detectionCube->Render();
+		detectionCube->Render();
 
-		char title[120];
-		sprintf_s(title, "%.1f Km/h | %.1f Mass | %.1f Friction | %i TouchingSand | %.1f Gravity | %i Coins", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand, App->physics->GetGravity().y,App->scene_intro->coinCount);
+		char title[80];
+		sprintf_s(title, "%.1f Km/h %.1f Mass %.1f Friction %i TouchingSand", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand);
 		App->window->SetTitle(title);
 	}
 
@@ -306,39 +277,11 @@ update_status ModulePlayer::Update(float dt)
 
 void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
-	if (body1 == App->scene_intro->sensor_cube2 || body2 == App->scene_intro->sensor_cube2) {
-		for (int currentCar = 0; currentCar < carCount; currentCar++)
-		{
-			if (currentCar != myCar)
-			{
-				if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar]) touchingSand = true;
-			}
-			else touchingSand = true;
-		}
-	}
-
-	if (body1 == App->scene_intro->sensor_cube3 || body2 == App->scene_intro->sensor_cube3) {
-		for (int currentCar = 0; currentCar < carCount; currentCar++)
-		{
-			if (currentCar != myCar)
-			{
-				if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar]) touchingSand = false;
-			}
-			else touchingSand = false;
-		}
-	}
-	for (int i = 0; i < 10; i++) {
-		if (!coinCollected[i] && (body1 == App->scene_intro->coin_body[i] || body2 == App->scene_intro->coin_body[i])) {
-			for (int currentCar = 0; currentCar < carCount; currentCar++)
-			{
-				if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar]) {
-					App->scene_intro->coin_body[i]->SetPos(0, -100, 0);
-					App->scene_intro->coin[i].SetPos(0, -100, 0);
-					App->scene_intro->coinCount+=1;
-					coinCollected[i] = true;
-				}
-			}
-		}
+	if (body1 == detectionCubeBody || body2 == detectionCubeBody) touchingSand = true; {
+		if (body1 == App->scene_intro->sandBody || body2 == App->scene_intro->sandBody){
+			touchingSand = true;
+			}	
+		else touchingSand = false;
 	}
 
 	if (body1 == App->scene_intro->sensor_cube || body2 == App->scene_intro->sensor_cube)

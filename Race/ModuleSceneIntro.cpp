@@ -25,41 +25,9 @@ bool ModuleSceneIntro::Start()
 	sensor_cube->SetAsSensor(true);
 	sensor_cube->SetPos(0, 3, 0);
 
-	sensor_cube2 = App->physics->AddBody(Cube(164.83f, 5.00f, 17.05f), 0.0);
-	sensor_cube2->SetAsSensor(true);
-	sensor_cube2->SetPos(48.59f, 3.f, 57.48f);
-
-	sensor_cube3 = App->physics->AddBody(Cube(1.f, 10.00f, 17.05f), 0.0);
-	sensor_cube3->SetAsSensor(true);
-	sensor_cube3->SetPos(140, 3.f, 57.48f);
-
-	coin[0] = Cylinder(1.0f, 0.5f);
-	coin[0].SetPos(178.3f, 1.5, 50.f);
-	coin[0].color = Yellow;
-	coin_body[0] = App->physics->AddBody(coin[0], 0.0);
-	coin_body[0]->SetAsSensor(true);
-
-	for (int i = 1; i < 10; i++)
-	{
-		coin[i] = Cylinder(1.0f, 0.5f);
-		coin[i].color = Yellow;
-	}
-
-	coin[1].SetPos(-21.47f, 3.63f, 57.48f);
-	coin[2].SetPos(122.43f, 3.63f, 57.48f);
-	coin[3].SetPos(-3.49f, 3.63f, 60.80f);
-	coin[4].SetPos(13.98f, 3.63f, 63.15f);
-	coin[5].SetPos(47.41f, 3.63f, 57.48f);
-	coin[6].SetPos(30.83f, 3.63f, 60.80f);
-	coin[7].SetPos(104.29f, 3.63f, 53.84f);
-	coin[8].SetPos(86.34f, 3.63f, 51.41f);
-	coin[9].SetPos(66.69f, 3.63f, 53.84f);
-
-	for (int i = 1; i < 10; i++)
-	{
-		coin_body[i] = App->physics->AddBody(coin[i], 0.0);
-		coin_body[i]->SetAsSensor(true);
-	}
+	coin = Cylinder(1.0f, 0.5f);
+	coin.SetPos(0, 3, 30);
+	coin.color = Yellow;
 
 	//platform = Cube(100, 0.4, 100);
 	//platform.SetPos(0, 1, -86.3288);
@@ -164,13 +132,11 @@ bool ModuleSceneIntro::Start()
 	rotatingCube[0]->SetPos(-94.48f, 1.33, 66.80f); 
 	rotatingCube[0]->color = Red;  
 	rotationAngle[0] = 0.0f;
-	rotatingCubeBody[0] = App->physics->AddBody(*rotatingCube[0], 0.0f);
 
 	rotatingCube[1] = new Cube(1.61f, 2.66f, 45.05f);  
 	rotatingCube[1]->SetPos(191.58f, 1.33, 66.80f); 
 	rotatingCube[1]->color = Red;  
 	rotationAngle[1] = 0.0f;
-	rotatingCubeBody[1] = App->physics->AddBody(*rotatingCube[1], 0.0f);
 
 	sandCube = new Cube(17.05f, 2.00f, 164.83f);
 	sandCube->SetPos(48.59f, +0.24f, 57.48f);
@@ -205,11 +171,8 @@ update_status ModuleSceneIntro::Update(float dt)
 	sandCube->Render();
 
 	angle++;
-	for (int i = 0; i < 10; i++)
-	{
-		coin[i].SetRotation(angle, vec3(0, 1, 0));
-		coin[i].Render();
-	}
+	coin.SetRotation(angle, vec3(0, 1, 0));
+	coin.Render();
 	platform.Render();
 
 	for ( auto& cube : cubes)
@@ -222,7 +185,6 @@ update_status ModuleSceneIntro::Update(float dt)
 
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
-
 }
 
 void ModuleSceneIntro::CreateCube(vec3 size, vec3 position, vec3 rotation, Color color)
