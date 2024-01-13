@@ -48,6 +48,8 @@ public:
 
 
 	PhysBody3D* sensor_cube;
+	PhysBody3D* sensor_cube2;
+	PhysBody3D* sensor_cube3;
 	Cylinder coin;
 	Cube platform;
 

@@ -174,6 +174,11 @@ update_status ModulePlayer::Update(float dt)
 
 		turn[myCar] = acceleration[myCar] = brake[myCar] = 0.0f;
 
+		if (App->input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT && currentCarSpeed > 0)
+		{
+			acceleration[myCar] = - (currentCarSpeed* vehicle[myCar]->info.frictionSlip);
+		}
+
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 		{
 			if (touchingSand) {
@@ -184,9 +189,10 @@ update_status ModulePlayer::Update(float dt)
 				maxSpeed = MAX_SPEED;
 			}
 
+
 			if(vehicle[myCar]->GetKmh() < maxSpeed)	acceleration[myCar] = MAX_ACCELERATION;
 			up[myCar] = true;
-			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
+			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT && !touchingSand) {
 				if (currentCarSpeed < MAX_TURBO_SPEED) {
 					acceleration[myCar] = MAX_ACCELERATION * 6;
 					if (turboFxPlayed == false) {
@@ -253,7 +259,7 @@ update_status ModulePlayer::Update(float dt)
 // Car friction change
 		if (App->input->GetKey(SDL_SCANCODE_H) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_H) == KEY_REPEAT)
 		{
-			vehicle[myCar]->info.frictionSlip = 1000;
+			vehicle[myCar]->info.frictionSlip = 100;
 			for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
        	 	{
             vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 5000;
@@ -261,7 +267,7 @@ update_status ModulePlayer::Update(float dt)
 		}
 		else
 		{
-			vehicle[myCar]->info.frictionSlip = 50.5;
+			vehicle[myCar]->info.frictionSlip = 5;
 			for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
        	 	{
             vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 50.5;
@@ -278,8 +284,11 @@ update_status ModulePlayer::Update(float dt)
 		}
 
 
-		if(touchingSand) vehicle[myCar]->info.frictionSlip = 1000;
-		else vehicle[myCar]->info.frictionSlip = 50.5;
+		if (touchingSand) {
+			vehicle[myCar]->info.frictionSlip = 100;
+			if (currentCarSpeed >= 39) vehicle[myCar]->ApplyEngineForce(-1000.0f);
+		}
+		else vehicle[myCar]->info.frictionSlip = 10;
 
 		vehicle[myCar]->Render();
 		detectionCube->Render();
@@ -295,11 +304,26 @@ update_status ModulePlayer::Update(float dt)
 
 void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
-	if (body1 == detectionCubeBody || body2 == detectionCubeBody) touchingSand = true; {
-		if (body1 == App->scene_intro->sandBody || body2 == App->scene_intro->sandBody){
-			touchingSand = true;
-			}	
-		else touchingSand = false;
+	if (body1 == App->scene_intro->sensor_cube2 || body2 == App->scene_intro->sensor_cube2) {
+		for (int currentCar = 0; currentCar < carCount; currentCar++)
+		{
+			if (currentCar != myCar)
+			{
+				if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar]) touchingSand = true;
+			}
+			else touchingSand = true;
+		}
+	}
+
+	if (body1 == App->scene_intro->sensor_cube3 || body2 == App->scene_intro->sensor_cube3) {
+		for (int currentCar = 0; currentCar < carCount; currentCar++)
+		{
+			if (currentCar != myCar)
+			{
+				if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar]) touchingSand = false;
+			}
+			else touchingSand = false;
+		}
 	}
 
 	if (body1 == App->scene_intro->sensor_cube || body2 == App->scene_intro->sensor_cube)
