@@ -50,7 +50,11 @@ public:
 	PhysBody3D* sensor_cube;
 	PhysBody3D* sensor_cube2;
 	PhysBody3D* sensor_cube3;
-	Cylinder coin;
+
+	Cylinder coin[10];
+	PhysBody3D* coin_body[10];
+	int coinCount = 0;
+
 	Cube platform;
 
 	PhysBody3D* physBody;
@@ -60,6 +64,7 @@ public:
 	float angle = 0.0f;
 
 	Cube* rotatingCube[2];
+	PhysBody3D* rotatingCubeBody[2];
 	float rotationAngle[2];
 
 	Cube* sandCube;

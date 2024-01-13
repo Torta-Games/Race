@@ -32,6 +32,7 @@ bool ModulePlayer::Start()
 	detectionCubeBody = App->physics->AddBody(*detectionCube, 0.0f);
 	detectionCube->color = Color(1,0,0,0.1f);
 	detectionCubeBody->SetAsSensor(true);
+	
 	return true;
 }
 
@@ -49,6 +50,7 @@ update_status ModulePlayer::Update(float dt)
 
 	btVector3 position = vehicle[myCar]->vehicle->getRigidBody()->getWorldTransform().getOrigin();
 	detectionCube->SetPos(position.x(), position.y()+0.3f, position.z());
+	detectionCubeBody->SetPos(position.x(), position.y() + 0.3f, position.z());
 	static int lastSpeedRange = -1;
 
 	myCar = App->network->clientIndex;
@@ -291,10 +293,10 @@ update_status ModulePlayer::Update(float dt)
 		else vehicle[myCar]->info.frictionSlip = 10;
 
 		vehicle[myCar]->Render();
-		detectionCube->Render();
+		//detectionCube->Render();
 
-		char title[80];
-		sprintf_s(title, "%.1f Km/h | %.1f Mass | %.1f Friction | %i TouchingSand | %.1f Gravity", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand, App->physics->GetGravity().y);
+		char title[120];
+		sprintf_s(title, "%.1f Km/h | %.1f Mass | %.1f Friction | %i TouchingSand | %.1f Gravity | %i Coins", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand, App->physics->GetGravity().y,App->scene_intro->coinCount);
 		App->window->SetTitle(title);
 	}
 
@@ -323,6 +325,19 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 				if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar]) touchingSand = false;
 			}
 			else touchingSand = false;
+		}
+	}
+	for (int i = 0; i < 10; i++) {
+		if (!coinCollected[i] && (body1 == App->scene_intro->coin_body[i] || body2 == App->scene_intro->coin_body[i])) {
+			for (int currentCar = 0; currentCar < carCount; currentCar++)
+			{
+				if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar]) {
+					App->scene_intro->coin_body[i]->SetPos(0, -100, 0);
+					App->scene_intro->coin[i].SetPos(0, -100, 0);
+					App->scene_intro->coinCount+=1;
+					coinCollected[i] = true;
+				}
+			}
 		}
 	}
 
