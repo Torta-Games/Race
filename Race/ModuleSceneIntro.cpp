@@ -137,7 +137,12 @@ bool ModuleSceneIntro::Start()
 	rotatingCube[1]->SetPos(191.58f, 1.33, 66.80f); 
 	rotatingCube[1]->color = Red;  
 	rotationAngle[1] = 0.0f;
-	
+
+	sandCube = new Cube(17.05f, 2.00f, 164.83f);
+	sandCube->SetPos(48.59f, +0.24f, 57.48f);
+	sandCube->color = Color(0.878f, 0.75f, 0.576f);
+	sandCube->SetRotation(90,vec3(0, 1, 0));
+	sandBody = App->physics->AddBody(*sandCube, 0.0f);
 	return ret;
 }
 
@@ -162,7 +167,9 @@ update_status ModuleSceneIntro::Update(float dt)
 	rotatingCube[i]->SetRotation(rotationAngle[i], vec3(0, 1, 0));  
 	rotatingCube[i]->Render(); 
 	}
-	
+
+	sandCube->Render();
+
 	angle++;
 	coin.SetRotation(angle, vec3(0, 1, 0));
 	coin.Render();

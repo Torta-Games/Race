@@ -68,6 +68,18 @@ bool ModulePhysics3D::Start()
 
 	return true;
 }
+//Gravity modifier function
+void ModulePhysics3D::ModifyGravity(vec3 deltaGravity) {
+	btVector3 currentGravity = world->getGravity();
+	btVector3 newGravity = currentGravity + btVector3(deltaGravity.x, deltaGravity.y, deltaGravity.z);
+	world->setGravity(newGravity);
+}
+//Get Gravity function
+vec3 ModulePhysics3D::GetGravity() {
+	btVector3 currentGravity = world->getGravity();
+	vec3 gravity = { currentGravity.getX(), currentGravity.getY(), currentGravity.getZ() };
+	return gravity;
+}
 
 // ---------------------------------------------------------
 update_status ModulePhysics3D::PreUpdate(float dt)
