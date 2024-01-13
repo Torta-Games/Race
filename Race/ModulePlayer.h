@@ -8,7 +8,8 @@ struct PhysVehicle3D;
 #define MAX_ACCELERATION 1000.0f
 #define TURN_DEGREES 15.0f * DEGTORAD
 #define BRAKE_POWER 1000.0f
-#define MAX_TURBO_SPEED 200.0f
+#define MAX_TURBO_SPEED 150.0f
+#define MAX_SPEED 100.0f
 
 class ModulePlayer : public Module
 {
@@ -43,5 +44,9 @@ public:
 	int nitro;
 	bool turboFxPlayed = false;
 	float currentCarSpeed;
+	bool touchingSand = false;
+	Cube* detectionCube;
+	PhysBody3D* detectionCubeBody;
+	btVector3* position;
 
 };

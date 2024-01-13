@@ -26,7 +26,13 @@ bool ModulePlayer::Start()
 	engine5 = App->audio->LoadFx("Assets/engine5_fx.wav");
 	engine6 = App->audio->LoadFx("Assets/engine6_fx.wav");
 	nitro = App->audio->LoadFx("Assets/nitro_fx.wav");
-;
+	
+	detectionCube = new Cube();
+	detectionCube->size = {4, 2, 4};
+	detectionCubeBody = App->physics->AddBody(*detectionCube, 0.0f);
+	detectionCube->color = Color(1,0,0,0.1f);
+	detectionCubeBody->SetAsSensor(true);
+
 	return true;
 }
 
@@ -41,13 +47,16 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
+	btVector3 position = vehicle[myCar]->vehicle->getRigidBody()->getWorldTransform().getOrigin();
+	detectionCube->SetPos(position.x(), position.y()+0.3f, position.z());
 	static int lastSpeedRange = -1;
 
 	myCar = App->network->clientIndex;
 	currentCarSpeed = vehicle[myCar]->GetKmh();
 
-	    int currentSpeedRange;
 
+	int currentSpeedRange;
+// Car engine dinamic sound
     if (currentCarSpeed < 5)
     {
         currentSpeedRange = 0;
@@ -77,7 +86,7 @@ update_status ModulePlayer::Update(float dt)
         currentSpeedRange = 6;
     }
 
-
+// Car engine dinamic sound
     if (currentSpeedRange != lastSpeedRange)
     {
         Mix_HaltChannel(-1);
@@ -109,7 +118,7 @@ update_status ModulePlayer::Update(float dt)
 
         lastSpeedRange = currentSpeedRange;
     }
-
+//Create car
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && carCount < 2)
 	{
 		CreateCar(carCount);
@@ -167,11 +176,11 @@ update_status ModulePlayer::Update(float dt)
 
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 		{
-			acceleration[myCar] = MAX_ACCELERATION;
+			if(vehicle[myCar]->GetKmh() < MAX_SPEED)	acceleration[myCar] = MAX_ACCELERATION;
 			up[myCar] = true;
 			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
 				if (currentCarSpeed < MAX_TURBO_SPEED) {
-					acceleration[myCar] = MAX_ACCELERATION * 4;
+					acceleration[myCar] = MAX_ACCELERATION * 6;
 					if (turboFxPlayed == false) {
 						App->audio->PlayFx(nitro);
 						turboFxPlayed = true;
@@ -224,7 +233,7 @@ update_status ModulePlayer::Update(float dt)
 		else vehicle[myCar]->ApplyEngineForce(acceleration[myCar]);
 		vehicle[myCar]->Turn(turn[myCar]);
 		vehicle[myCar]->Brake(brake[myCar]);
-
+// Car mass change
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT)
 		{
 			vehicle[myCar]->info.mass -= 1;
@@ -233,11 +242,32 @@ update_status ModulePlayer::Update(float dt)
 		{
 			vehicle[myCar]->info.mass += 1;
 		}
+// Car friction change
+		if (App->input->GetKey(SDL_SCANCODE_H) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_H) == KEY_REPEAT)
+		{
+			vehicle[myCar]->info.frictionSlip = 1000;
+			for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
+       	 	{
+            vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 100;
+        	}
+		}
+		else
+		{
+			vehicle[myCar]->info.frictionSlip = 50.5;
+			for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
+       	 	{
+            vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 50.5;
+        	}
+		}
+
+		if(touchingSand) vehicle[myCar]->info.frictionSlip = 1000;
+		else vehicle[myCar]->info.frictionSlip = 50.5;
 
 		vehicle[myCar]->Render();
+		detectionCube->Render();
 
 		char title[80];
-		sprintf_s(title, "%.1f Km/h %.1f Mass", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass);
+		sprintf_s(title, "%.1f Km/h %.1f Mass %.1f Friction %i TouchingSand", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand);
 		App->window->SetTitle(title);
 	}
 
@@ -247,6 +277,13 @@ update_status ModulePlayer::Update(float dt)
 
 void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
+	if (body1 == detectionCubeBody || body2 == detectionCubeBody) touchingSand = true; {
+		if (body1 == App->scene_intro->sandBody || body2 == App->scene_intro->sandBody){
+			touchingSand = true;
+			}	
+		else touchingSand = false;
+	}
+
 	if (body1 == App->scene_intro->sensor_cube || body2 == App->scene_intro->sensor_cube)
 	{
 		for (int currentCar = 0; currentCar < carCount; currentCar++)
@@ -351,4 +388,3 @@ void ModulePlayer::CreateCar(int carIndex)
 	vehicle[carIndex]->collision_listeners.add(this); // Add this module as listener to callbacks from vehicle
 	vehicle[carIndex]->SetPos((carIndex * 5) - 86, 1, -10);
 }
-

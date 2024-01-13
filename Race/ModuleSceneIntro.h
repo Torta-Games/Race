@@ -59,4 +59,7 @@ public:
 
 	Cube* rotatingCube[2];
 	float rotationAngle[2];
+
+	Cube* sandCube;
+	PhysBody3D* sandBody;
 };
