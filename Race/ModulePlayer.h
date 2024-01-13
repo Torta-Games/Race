@@ -31,8 +31,12 @@ public:
 	float acceleration[2];
 	float brake[2];
 
-	int carCount = 0;
+	bool checkpoint1 = false;
+	bool checkpoint2 = false;
+	bool checkpoint3 = false;
 
+	int carCount = 0;
+	bool win = false;
 	bool up[2] = { false, false };
 	bool down[2] = { false, false };
 	bool left[2] = { false, false };

@@ -3,6 +3,8 @@
 #include "ModuleSceneIntro.h"
 #include "Primitive.h"
 #include "PhysBody3D.h"
+#include "ModuleTextures.h"
+#include "ModuleRender.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -17,8 +19,13 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
+	App->renderer->Start();
+	App->textures->Start();
+
 	App->camera->Move(vec3(0.0f, 5.0f, -5.0f));
 	App->camera->LookAt(vec3(0, 0, 15));
+	
+	winTex = App->textures->Load("Assets/win.png");
 
 	// Create sensor cube (will trigger with car)
 	sensor_cube = App->physics->AddBody(Cube(5, 5, 5), 0.0);
@@ -160,6 +167,13 @@ bool ModuleSceneIntro::CleanUp()
 	LOG("Unloading Intro scene");
 
 	return true;
+}
+
+void ModuleSceneIntro::winF() {
+	//App->renderer->Blit(winTex, x, y, NULL);
+	App->player->win = true;
+	LOG("CHECK");
+	SDL_Quit();
 }
 
 // Update

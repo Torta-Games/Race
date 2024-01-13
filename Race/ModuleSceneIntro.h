@@ -25,6 +25,8 @@ public:
 
 	void CreateCube(vec3 size, vec3 position, vec3 rotation, Color color);
 
+	void winF();
+
 public:
 	/*
 	PhysBody3D* pb_snake[MAX_SNAKE];
@@ -64,4 +66,6 @@ public:
 
 	Cube* sandCube;
 	PhysBody3D* sandBody;
+
+	SDL_Texture* winTex;
 };
