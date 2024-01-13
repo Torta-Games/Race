@@ -18,10 +18,10 @@ bool ModuleMenu::Start()
 	LOG("Loading Menu assets");
 	bool ret = true;
 
-	menu1 = App->textures->Load("Assets/menu1.png");
-	menu2 = App->textures->Load("Assets/menu2.png");
-	menu3 = App->textures->Load("Assets/menu3.png");
-	menu4 = App->textures->Load("Assets/menu4.png");
+	menu1 = App->textures->Load("Assets/PortadaBlockRace1.png");
+	menu2 = App->textures->Load("Assets/PortadaBlockRace2.png");
+	menu3 = App->textures->Load("Assets/PortadaBlockRace3.png");
+	menu4 = App->textures->Load("Assets/PortadaBlockRace4.png");
 
 	return ret;
 }
@@ -57,8 +57,8 @@ update_status ModuleMenu::Update(float dt)
 		else if (menuIndex == 4) return UPDATE_STOP;
 	}
 
-	int imageWidth = 3840;
-	int imageHeight = 2160;
+	int imageWidth = 1920;
+	int imageHeight = 1080;
 
 	int windowWidth, windowHeight;
 	SDL_GetWindowSize(App->window->window, &windowWidth, &windowHeight);

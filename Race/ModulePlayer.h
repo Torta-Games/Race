@@ -53,5 +53,4 @@ public:
 	PhysBody3D* detectionCubeBody;
 	btVector3* position;
 
-	float maxSpeed = MAX_SPEED;
 };

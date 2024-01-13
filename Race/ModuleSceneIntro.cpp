@@ -32,14 +32,6 @@ bool ModuleSceneIntro::Start()
 	sensor_cube->SetAsSensor(true);
 	sensor_cube->SetPos(0, 3, 0);
 
-	sensor_cube2 = App->physics->AddBody(Cube(164.83f, 5.00f, 17.05f), 0.0);
-	sensor_cube2->SetAsSensor(true);
-	sensor_cube2->SetPos(48.59f, 3.f, 57.48f);
-
-	sensor_cube3 = App->physics->AddBody(Cube(1.f, 10.00f, 17.05f), 0.0);
-	sensor_cube3->SetAsSensor(true);
-	sensor_cube3->SetPos(140, 3.f, 57.48f);
-
 	coin = Cylinder(1.0f, 0.5f);
 	coin.SetPos(0, 3, 30);
 	coin.color = Yellow;
