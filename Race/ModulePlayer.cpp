@@ -32,7 +32,6 @@ bool ModulePlayer::Start()
 	detectionCubeBody = App->physics->AddBody(*detectionCube, 0.0f);
 	detectionCube->color = Color(1,0,0,0.1f);
 	detectionCubeBody->SetAsSensor(true);
-
 	return true;
 }
 
@@ -47,6 +46,7 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
+
 	btVector3 position = vehicle[myCar]->vehicle->getRigidBody()->getWorldTransform().getOrigin();
 	detectionCube->SetPos(position.x(), position.y()+0.3f, position.z());
 	static int lastSpeedRange = -1;
@@ -176,7 +176,15 @@ update_status ModulePlayer::Update(float dt)
 
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 		{
-			if(vehicle[myCar]->GetKmh() < MAX_SPEED)	acceleration[myCar] = MAX_ACCELERATION;
+			if (touchingSand) {
+				maxSpeed = 40;
+			}
+			else
+			{
+				maxSpeed = MAX_SPEED;
+			}
+
+			if(vehicle[myCar]->GetKmh() < maxSpeed)	acceleration[myCar] = MAX_ACCELERATION;
 			up[myCar] = true;
 			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
 				if (currentCarSpeed < MAX_TURBO_SPEED) {
@@ -248,7 +256,7 @@ update_status ModulePlayer::Update(float dt)
 			vehicle[myCar]->info.frictionSlip = 1000;
 			for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
        	 	{
-            vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 100;
+            vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 5000;
         	}
 		}
 		else
@@ -259,6 +267,16 @@ update_status ModulePlayer::Update(float dt)
             vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 50.5;
         	}
 		}
+//Gravity modifier
+		if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN)
+		{
+			App->physics->ModifyGravity({ 0, -5, 0 });
+		}
+		if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
+		{
+			App->physics->ModifyGravity({ 0, +5, 0 });
+		}
+
 
 		if(touchingSand) vehicle[myCar]->info.frictionSlip = 1000;
 		else vehicle[myCar]->info.frictionSlip = 50.5;
@@ -267,7 +285,7 @@ update_status ModulePlayer::Update(float dt)
 		detectionCube->Render();
 
 		char title[80];
-		sprintf_s(title, "%.1f Km/h %.1f Mass %.1f Friction %i TouchingSand", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand);
+		sprintf_s(title, "%.1f Km/h | %.1f Mass | %.1f Friction | %i TouchingSand | %.1f Gravity", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand, App->physics->GetGravity().y);
 		App->window->SetTitle(title);
 	}
 
