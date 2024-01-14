@@ -53,4 +53,6 @@ public:
 	PhysBody3D* detectionCubeBody;
 	btVector3* position;
 
+	int vueltas = 0;
+
 };

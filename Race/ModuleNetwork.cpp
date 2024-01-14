@@ -29,7 +29,7 @@ bool ModuleNetwork::CleanUp()
 update_status ModuleNetwork::Update(float dt)
 {
 	
-	if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN || optionsIndex == 1) 
+	if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN || optionsIndex == 3) 
 	{
 		optionsIndex = 0;
 		multiplayer = true;
@@ -54,7 +54,7 @@ update_status ModuleNetwork::Update(float dt)
 		CreateClient();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN || optionsIndex == 3) 
+	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN || optionsIndex == 1) 
 	{
 		optionsIndex = 0;
 		if (multiplayer) StartGame();
@@ -226,7 +226,7 @@ void ModuleNetwork::OnGameStart()
 	App->player->Enable();
 	App->camera->Enable();
 	App->menu->Disable();
-	App->renderer->Disable();
+	/*App->renderer->Disable();*/
 
 	for (int i = 0; i < clientsCount; i++)
 	{

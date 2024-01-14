@@ -30,7 +30,7 @@ bool ModulePlayer::Start()
 	detectionCube = new Cube();
 	detectionCube->size = {4, 2, 4};
 	detectionCubeBody = App->physics->AddBody(*detectionCube, 0.0f);
-	detectionCube->color = Color(1,0,0,0.1f);
+	detectionCube->color = Color(1,0,0,0);
 	detectionCubeBody->SetAsSensor(true);
 
 	return true;
@@ -74,9 +74,9 @@ update_status ModulePlayer::Update(float dt)
 		LOG("CHECK")
 	}
 
-	LOG(" x: %f", position.x());
-	LOG(" y: %f", position.y());
-	LOG(" Z: %f", position.z());
+	//LOG(" x: %f", position.x());
+	//LOG(" y: %f", position.y());
+	//LOG(" Z: %f", position.z());
 
 	int currentSpeedRange;
 // Car engine dinamic sound
@@ -287,7 +287,6 @@ update_status ModulePlayer::Update(float dt)
 		else vehicle[myCar]->info.frictionSlip = 50.5;
 
 		vehicle[myCar]->Render();
-		detectionCube->Render();
 
 		char title[80];
 		sprintf_s(title, "%.1f Km/h %.1f Mass %.1f Friction %i TouchingSand", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand);
