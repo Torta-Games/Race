@@ -3,6 +3,8 @@
 #include "ModuleSceneIntro.h"
 #include "Primitive.h"
 #include "PhysBody3D.h"
+#include "ModuleTextures.h"
+#include "ModuleRender.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -16,6 +18,10 @@ bool ModuleSceneIntro::Start()
 {
 	LOG("Loading Intro assets");
 	bool ret = true;
+
+	App->renderer->Start();
+	App->textures->Start();
+	winTex = App->textures->Load("Assets/win.png");
 
 	App->camera->Move(vec3(0.0f, 5.0f, -5.0f));
 	App->camera->LookAt(vec3(0, 0, 15));
@@ -179,6 +185,14 @@ bool ModuleSceneIntro::Start()
 	sandBody = App->physics->AddBody(*sandCube, 0.0f);
 	return ret;
 }
+
+void ModuleSceneIntro::winF() {
+	//App->renderer->Blit(winTex, x, y, NULL);
+	App->player->win = true;
+	LOG("CHECK");
+	SDL_Quit();
+}
+
 
 // Load assets
 bool ModuleSceneIntro::CleanUp()

@@ -56,6 +56,29 @@ update_status ModulePlayer::Update(float dt)
 	myCar = App->network->clientIndex;
 	currentCarSpeed = vehicle[myCar]->GetKmh();
 
+	if (position.x() > -92 && position.x() < -78 && position.z() > -2 && checkpoint3 == true && win == false) {
+		App->scene_intro->winF();
+	}
+
+	if (position.x() > 175 && position.x() < 189 && position.x() > 20) {
+		checkpoint1 = true;
+		LOG("CHECK")
+	}
+
+
+	if (position.z() > 0 && position.z() < 14 && position.z() > -7 && checkpoint1 == true) {
+		checkpoint2 = true;
+		LOG("CHECK")
+	}
+
+	if (position.z() > -69 && position.z() < -55 && position.x() < 0 && checkpoint2 == true) {
+		checkpoint3 = true;
+		LOG("CHECK")
+	}
+
+	LOG(" x: %f", position.x());
+	LOG(" y: %f", position.y());
+	LOG(" Z: %f", position.z());
 
 	int currentSpeedRange;
 // Car engine dinamic sound

@@ -24,6 +24,7 @@ public:
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 
 	void CreateCube(vec3 size, vec3 position, vec3 rotation, Color color);
+	void winF();
 
 public:
 	/*
@@ -69,4 +70,6 @@ public:
 
 	Cube* sandCube;
 	PhysBody3D* sandBody;
+
+	SDL_Texture* winTex;
 };
