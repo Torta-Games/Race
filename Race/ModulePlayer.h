@@ -55,4 +55,6 @@ public:
 	btVector3* position;
 	bool coinCollected[10] = { false, false, false, false, false, false, false, false, false, false };
 	float maxSpeed = MAX_SPEED;
+
+	int vueltas = 0;
 };

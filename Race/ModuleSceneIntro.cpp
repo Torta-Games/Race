@@ -21,7 +21,7 @@ bool ModuleSceneIntro::Start()
 
 	App->renderer->Start();
 	App->textures->Start();
-	winTex = App->textures->Load("Assets/win.png");
+	winTex = App->textures->Load("Assets/YouWon.png");
 
 	App->camera->Move(vec3(0.0f, 5.0f, -5.0f));
 	App->camera->LookAt(vec3(0, 0, 15));
@@ -187,7 +187,7 @@ bool ModuleSceneIntro::Start()
 }
 
 void ModuleSceneIntro::winF() {
-	//App->renderer->Blit(winTex, x, y, NULL);
+	App->renderer->Blit(winTex, 0, 0, NULL);
 	App->player->win = true;
 	LOG("CHECK");
 	SDL_Quit();
@@ -211,9 +211,9 @@ update_status ModuleSceneIntro::Update(float dt)
 	
 	for (int i = 0; i < 2; i++)
 	{
-	rotationAngle[i] -= dt*100;  
-	rotatingCube[i]->SetRotation(rotationAngle[i], vec3(0, 1, 0));  
-	rotatingCube[i]->Render(); 
+		rotationAngle[i] -= dt*100;  
+		rotatingCube[i]->SetRotation(rotationAngle[i], vec3(0, 1, 0));  
+		rotatingCube[i]->Render(); 
 	}
 
 	sandCube->Render();
@@ -229,6 +229,12 @@ update_status ModuleSceneIntro::Update(float dt)
 	for ( auto& cube : cubes)
 	{
 		cube.Render();
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_K))
+	{
+		App->renderer->Blit(winTex, 0, 0, NULL);
+
 	}
 
 	return UPDATE_CONTINUE;
