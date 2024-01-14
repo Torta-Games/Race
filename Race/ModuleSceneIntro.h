@@ -51,6 +51,10 @@ public:
 	PhysBody3D* sensor_cube;
 	PhysBody3D* sensor_cube2;
 	PhysBody3D* sensor_cube3;
+	PhysBody3D* sensor_meta_cube;
+	bool gameStarted = false;
+	bool firstCheckpoint = false;
+	bool gameFinished = false;
 
 	Cylinder coin[10];
 	PhysBody3D* coin_body[10];
@@ -71,5 +75,10 @@ public:
 	Cube* sandCube;
 	PhysBody3D* sandBody;
 
+	Cube* loseCube;
+	PhysBody3D* loseBody;
+
 	SDL_Texture* winTex;
+
+	Timer cronometro;
 };

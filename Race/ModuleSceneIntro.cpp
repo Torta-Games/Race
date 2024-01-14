@@ -39,8 +39,14 @@ bool ModuleSceneIntro::Start()
 	sensor_cube3->SetAsSensor(true);
 	sensor_cube3->SetPos(140, 3.f, 57.48f);
 
+	sensor_meta_cube = App->physics->AddBody(Cube(17.05f, 10.00f, 1.0f), 0.0);
+	sensor_meta_cube->SetAsSensor(true);
+	sensor_meta_cube->SetPos(-85.2f, 3.f, -2.3f);
+
+	// Coins map
+
 	coin[0] = Cylinder(1.0f, 0.5f);
-	coin[0].SetPos(178.3f, 1.5, 50.f);
+	coin[0].SetPos(38.41f, 9, -62.07f);
 	coin[0].color = Yellow;
 	coin_body[0] = App->physics->AddBody(coin[0], 0.0);
 	coin_body[0]->SetAsSensor(true);
@@ -75,6 +81,7 @@ bool ModuleSceneIntro::Start()
 	physBody = App->physics->AddBody(platform, 0.0f);
 	platform.physbody = physBody;
 	
+	// Create map
 	CreateCube(vec3(17.05f, 2.00f, 71.41f), vec3(182.33f, -0.45f, 13.25f), vec3(-0.00f, 0.00f, -0.00f), Color(0.19f, 0.18f, 0.19f));
 	CreateCube(vec3(17.05f, 2.00f, 250.44f), vec3(48.59f, -0.45f, 57.48f), vec3(-0.00f, 1.57f, -0.00f), Color(0.19f, 0.18f, 0.19f));
 	CreateCube(vec3(17.05f, 2.00f, 102.50f), vec3(-85.15f, -0.45f, -2.30f), vec3(-0.00f, 0.00f, -0.00f), Color(0.19f, 0.18f, 0.19f));
@@ -183,6 +190,15 @@ bool ModuleSceneIntro::Start()
 	sandCube->color = Color(0.878f, 0.75f, 0.576f);
 	sandCube->SetRotation(90,vec3(0, 1, 0));
 	sandBody = App->physics->AddBody(*sandCube, 0.0f);
+
+
+	loseCube = new Cube(332.65f, 1.08f, 449.65f);
+	loseCube->SetPos(37.22f, -1.99f, -21.03f);
+	loseCube->color = Color(0.02f, 0.80f, 0.00f);
+	loseBody = App->physics->AddBody(*loseCube, 0.0f);
+	loseBody->SetPos(37.22f, -0.5f, -21.03f);
+	loseBody->SetAsSensor(true);
+
 	return ret;
 }
 
@@ -190,9 +206,8 @@ void ModuleSceneIntro::winF() {
 	App->renderer->Blit(winTex, 0, 0, NULL);
 	App->player->win = true;
 	LOG("CHECK");
-	SDL_Quit();
+	//SDL_Quit();
 }
-
 
 // Load assets
 bool ModuleSceneIntro::CleanUp()
@@ -208,11 +223,14 @@ update_status ModuleSceneIntro::Update(float dt)
 	//Plane p(0, 1, 0, 0);
 	//p.axis = true;
 	//p.Render();
+
+	if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)	cronometro.Start();
+	if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)	cronometro.Stop();
 	
 	for (int i = 0; i < 2; i++)
 	{
 		rotationAngle[i] -= dt*100;  
-		rotatingCube[i]->SetRotation(rotationAngle[i], vec3(0, 1, 0));  
+		rotatingCube[i]->SetRotation(rotationAngle[i], vec3(0, 1, 0));
 		rotatingCube[i]->Render(); 
 	}
 
@@ -233,9 +251,18 @@ update_status ModuleSceneIntro::Update(float dt)
 
 	if (App->input->GetKey(SDL_SCANCODE_K))
 	{
-		App->renderer->Blit(winTex, 0, 0, NULL);
+		int imageWidth = 1920;
+		int imageHeight = 1080;
+
+		int windowWidth, windowHeight;
+		SDL_GetWindowSize(App->window->window, &windowWidth, &windowHeight);
+		int xPos = (windowWidth - imageWidth) / 2;
+		int yPos = (windowHeight - imageHeight) / 2;
+
+		App->renderer->Blit(winTex, xPos, yPos, NULL);
 
 	}
+
 
 	return UPDATE_CONTINUE;
 }

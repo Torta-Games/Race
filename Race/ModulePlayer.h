@@ -56,6 +56,9 @@ public:
 	bool coinCollected[10] = { false, false, false, false, false, false, false, false, false, false };
 	int coinFx;
 	float maxSpeed = MAX_SPEED;
+	int currentSpeedRange;
+
+	float countdown, killercountdown;
 
 	int vueltas = 0;
 };

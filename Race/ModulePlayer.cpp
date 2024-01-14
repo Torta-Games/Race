@@ -33,6 +33,8 @@ bool ModulePlayer::Start()
 	detectionCubeBody = App->physics->AddBody(*detectionCube, 0.0f);
 	detectionCube->color = Color(1,0,0,0.1f);
 	detectionCubeBody->SetAsSensor(true);
+
+	killercountdown = 60.0f;
 	
 	return true;
 }
@@ -77,11 +79,15 @@ update_status ModulePlayer::Update(float dt)
 		LOG("CHECK")
 	}
 
-	LOG(" x: %f", position.x());
-	LOG(" y: %f", position.y());
-	LOG(" Z: %f", position.z());
+// timer 
+	if (killercountdown > -1 && App->scene_intro->gameStarted) {
+		killercountdown -= dt;
+	}
+	else if (killercountdown < 0)
+	{
+		SDL_Quit();
+	}
 
-	int currentSpeedRange;
 // Car engine dinamic sound
     if (currentCarSpeed < 5)
     {
@@ -320,7 +326,7 @@ update_status ModulePlayer::Update(float dt)
 		//detectionCube->Render();
 
 		char title[120];
-		sprintf_s(title, "%.1f Km/h | %.1f Mass | %.1f Friction | %i TouchingSand | %.1f Gravity | %i Coins", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand, App->physics->GetGravity().y,App->scene_intro->coinCount);
+		sprintf_s(title, "%.1f Km/h | %.1f Mass | %.1f Friction | %i TouchingSand | %.1f Gravity | %i Coins | %.2f Cronometro | %i GS %i CK %i GF", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand, App->physics->GetGravity().y,App->scene_intro->coinCount, killercountdown, App->scene_intro->gameStarted, App->scene_intro->firstCheckpoint, App->scene_intro->gameFinished);
 		App->window->SetTitle(title);
 	}
 
@@ -340,17 +346,26 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 			else touchingSand = true;
 		}
 	}
-
+	//Collisión para fixear la arena + checkpoint
 	if (body1 == App->scene_intro->sensor_cube3 || body2 == App->scene_intro->sensor_cube3) {
 		for (int currentCar = 0; currentCar < carCount; currentCar++)
 		{
 			if (currentCar != myCar)
 			{
-				if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar]) touchingSand = false;
+				if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar])
+				{
+					touchingSand = false;
+					App->scene_intro->firstCheckpoint = true;
+				}
 			}
-			else touchingSand = false;
+			else {
+				touchingSand = false;
+				App->scene_intro->firstCheckpoint = true;
+			}
 		}
 	}
+
+	//colision monedas
 	for (int i = 0; i < 10; i++) {
 		if (!coinCollected[i] && (body1 == App->scene_intro->coin_body[i] || body2 == App->scene_intro->coin_body[i])) {
 			for (int currentCar = 0; currentCar < carCount; currentCar++)
@@ -361,10 +376,47 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 					App->scene_intro->coinCount+=1;
 					coinCollected[i] = true;
 					App->audio->PlayFx(coinFx);
+					killercountdown += 10.0f;
 				}
 			}
 		}
 	}
+	//Colisión si te caes del mapa pierdes
+	if (body1 == App->scene_intro->loseBody || body2 == App->scene_intro->loseBody) {
+		for (int currentCar = 0; currentCar < carCount; currentCar++)
+		{
+			if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar]) {
+				SDL_Quit();
+			}
+		}
+	}
+	//Colisión empezar partida
+	if (body1 == App->scene_intro->sensor_meta_cube || body2 == App->scene_intro->sensor_meta_cube) {
+		for (int currentCar = 0; currentCar < carCount; currentCar++)
+		{
+			if (currentCar != myCar)
+			{
+				if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar])
+				{
+					if (!App->scene_intro->gameStarted) {
+						App->scene_intro->gameStarted = true;
+					}
+					else if (App->scene_intro->gameStarted) {
+						App->scene_intro->gameFinished = true;
+					}
+				}
+			}
+			else {
+				if (!App->scene_intro->gameStarted) {
+					App->scene_intro->gameStarted = true;
+				}
+				else if (App->scene_intro->gameStarted && App->scene_intro->firstCheckpoint) {
+					App->scene_intro->gameFinished = true;
+				}
+			}
+		}
+	}
+
 
 	if (body1 == App->scene_intro->sensor_cube || body2 == App->scene_intro->sensor_cube)
 	{
