@@ -57,3 +57,10 @@ void PhysBody3D::SetAsSensor(bool is_sensor)
 			body->setCollisionFlags(body->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE);
 	}
 }
+
+void PhysBody3D::SetRotation(btQuaternion q)
+{
+	btTransform t = body->getWorldTransform();
+	t.setRotation(q);
+	body->setWorldTransform(t);
+}

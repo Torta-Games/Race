@@ -185,6 +185,12 @@ bool ModuleSceneIntro::Start()
 	rotationAngle[1] = 0.0f;
 	rotatingCubeBody[1] = App->physics->AddBody(*rotatingCube[1], 0.0f);
 
+	rotatingCube[2] = new Cube(1.61f, 2.66f, 45.05f);
+	rotatingCube[2]->SetPos(29.58f, 1.33, -109.03f);
+	rotatingCube[2]->color = Red;
+	rotationAngle[2] = 0.0f;
+	rotatingCubeBody[2] = App->physics->AddBody(*rotatingCube[2], 0.0f);
+
 	sandCube = new Cube(17.05f, 2.00f, 164.83f);
 	sandCube->SetPos(48.59f, +0.24f, 57.48f);
 	sandCube->color = Color(0.878f, 0.75f, 0.576f);
@@ -227,19 +233,23 @@ update_status ModuleSceneIntro::Update(float dt)
 	if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)	cronometro.Start();
 	if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)	cronometro.Stop();
 	
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		rotationAngle[i] -= dt*100;  
 		rotatingCube[i]->SetRotation(rotationAngle[i], vec3(0, 1, 0));
 		rotatingCube[i]->Render(); 
+		btQuaternion rotationQuaternion2 = btQuaternion(btVector3(0, 1, 0), rotationAngle[i] * DEGTORAD);
+		rotatingCubeBody[i]->SetRotation(btQuaternion(btVector3(0, 1, 0), rotationAngle[i] * DEGTORAD));
 	}
 
 	sandCube->Render();
 
 	angle++;
+	btQuaternion rotationQuaternion = btQuaternion(btVector3(0, 1, 0), angle * DEGTORAD);
 	for (int i = 0; i < 10; i++)
 	{
 		coin[i].SetRotation(angle, vec3(0, 1, 0));
+		coin_body[i]->SetRotation(rotationQuaternion);
 		coin[i].Render();
 	}
 	platform.Render();

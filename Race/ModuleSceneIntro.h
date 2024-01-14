@@ -68,9 +68,9 @@ public:
 
 	float angle = 0.0f;
 
-	Cube* rotatingCube[2];
-	PhysBody3D* rotatingCubeBody[2];
-	float rotationAngle[2];
+	Cube* rotatingCube[3];
+	PhysBody3D* rotatingCubeBody[3];
+	float rotationAngle[3];
 
 	Cube* sandCube;
 	PhysBody3D* sandBody;

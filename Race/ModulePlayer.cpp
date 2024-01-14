@@ -50,7 +50,6 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
-
 	btVector3 position = vehicle[myCar]->vehicle->getRigidBody()->getWorldTransform().getOrigin();
 	detectionCube->SetPos(position.x(), position.y()+0.3f, position.z());
 	detectionCubeBody->SetPos(position.x(), position.y() + 0.3f, position.z());
@@ -59,25 +58,25 @@ update_status ModulePlayer::Update(float dt)
 	myCar = App->network->clientIndex;
 	currentCarSpeed = vehicle[myCar]->GetKmh();
 
-	if (position.x() > -92 && position.x() < -78 && position.z() > -2 && checkpoint3 == true && win == false) {
-		App->scene_intro->winF();
-	}
+	//if (position.x() > -92 && position.x() < -78 && position.z() > -2 && checkpoint3 == true && win == false) {
+	//	App->scene_intro->winF();
+	//}
 
-	if (position.x() > 175 && position.x() < 189 && position.x() > 20) {
-		checkpoint1 = true;
-		LOG("CHECK")
-	}
+	//if (position.x() > 175 && position.x() < 189 && position.x() > 20) {
+	//	checkpoint1 = true;
+	//	LOG("CHECK")
+	//}
 
 
-	if (position.z() > 0 && position.z() < 14 && position.z() > -7 && checkpoint1 == true) {
-		checkpoint2 = true;
-		LOG("CHECK")
-	}
+	//if (position.z() > 0 && position.z() < 14 && position.z() > -7 && checkpoint1 == true) {
+	//	checkpoint2 = true;
+	//	LOG("CHECK")
+	//}
 
-	if (position.z() > -69 && position.z() < -55 && position.x() < 0 && checkpoint2 == true) {
-		checkpoint3 = true;
-		LOG("CHECK")
-	}
+	//if (position.z() > -69 && position.z() < -55 && position.x() < 0 && checkpoint2 == true) {
+	//	checkpoint3 = true;
+	//	LOG("CHECK")
+	//}
 
 // timer 
 	if (killercountdown > -1 && App->scene_intro->gameStarted) {
@@ -151,10 +150,10 @@ update_status ModulePlayer::Update(float dt)
         lastSpeedRange = currentSpeedRange;
     }
 //Create car
-	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && carCount < 2)
-	{
-		CreateCar(carCount);
-	}
+	//if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && carCount < 2)
+	//{
+	//	CreateCar(carCount);
+	//}
 	
 	if (App->network->gameStarted)
 	{
@@ -240,7 +239,7 @@ update_status ModulePlayer::Update(float dt)
 
 		}
 		else up[myCar] = false;
-
+		// Car movement
 		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
 			if (turn[myCar] < TURN_DEGREES)
@@ -279,7 +278,8 @@ update_status ModulePlayer::Update(float dt)
 		else vehicle[myCar]->ApplyEngineForce(acceleration[myCar]);
 		vehicle[myCar]->Turn(turn[myCar]);
 		vehicle[myCar]->Brake(brake[myCar]);
-// Car mass change
+
+		// Car mass change
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT)
 		{
 			vehicle[myCar]->info.mass -= 1;
@@ -288,7 +288,8 @@ update_status ModulePlayer::Update(float dt)
 		{
 			vehicle[myCar]->info.mass += 1;
 		}
-// Car friction change
+
+		// Car friction change
 		if (App->input->GetKey(SDL_SCANCODE_H) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_H) == KEY_REPEAT)
 		{
 			vehicle[myCar]->info.frictionSlip = 100;
@@ -305,7 +306,8 @@ update_status ModulePlayer::Update(float dt)
             vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 50.5;
         	}
 		}
-//Gravity modifier
+
+		//Gravity modifier
 		if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN)
 		{
 			App->physics->ModifyGravity({ 0, -5, 0 });
