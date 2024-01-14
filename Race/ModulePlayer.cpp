@@ -26,6 +26,7 @@ bool ModulePlayer::Start()
 	engine5 = App->audio->LoadFx("Assets/engine5_fx.wav");
 	engine6 = App->audio->LoadFx("Assets/engine6_fx.wav");
 	nitro = App->audio->LoadFx("Assets/nitro_fx.wav");
+	coinFx = App->audio->LoadFx("Assets/collectcoin_fx.wav");
 	
 	detectionCube = new Cube();
 	detectionCube->size = {4, 2, 4};
@@ -359,6 +360,7 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 					App->scene_intro->coin[i].SetPos(0, -100, 0);
 					App->scene_intro->coinCount+=1;
 					coinCollected[i] = true;
+					App->audio->PlayFx(coinFx);
 				}
 			}
 		}

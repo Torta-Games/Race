@@ -54,6 +54,7 @@ public:
 	PhysBody3D* detectionCubeBody;
 	btVector3* position;
 	bool coinCollected[10] = { false, false, false, false, false, false, false, false, false, false };
+	int coinFx;
 	float maxSpeed = MAX_SPEED;
 
 	int vueltas = 0;
