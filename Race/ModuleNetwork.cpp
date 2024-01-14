@@ -226,7 +226,7 @@ void ModuleNetwork::OnGameStart()
 	App->player->Enable();
 	App->camera->Enable();
 	App->menu->Disable();
-	/*App->renderer->Disable();*/
+	App->renderer->Disable();
 
 	for (int i = 0; i < clientsCount; i++)
 	{

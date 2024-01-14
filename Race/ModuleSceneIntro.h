@@ -26,8 +26,6 @@ public:
 	void CreateCube(vec3 size, vec3 position, vec3 rotation, Color color);
 	void winF();
 
-	void winF();
-
 public:
 	/*
 	PhysBody3D* pb_snake[MAX_SNAKE];
@@ -51,7 +49,13 @@ public:
 
 
 	PhysBody3D* sensor_cube;
-	Cylinder coin;
+	PhysBody3D* sensor_cube2;
+	PhysBody3D* sensor_cube3;
+
+	Cylinder coin[10];
+	PhysBody3D* coin_body[10];
+	int coinCount = 0;
+
 	Cube platform;
 
 	PhysBody3D* physBody;
@@ -61,6 +65,7 @@ public:
 	float angle = 0.0f;
 
 	Cube* rotatingCube[2];
+	PhysBody3D* rotatingCubeBody[2];
 	float rotationAngle[2];
 
 	Cube* sandCube;
