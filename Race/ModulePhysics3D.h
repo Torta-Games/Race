@@ -38,9 +38,9 @@ public:
 	void ModifyGravity(vec3 g = { 0, -10, 0 });
 	vec3 GetGravity();
 
-private:
+	bool debug = false;
 
-	bool debug=false;
+private:
 
 	btDefaultCollisionConfiguration*	collision_conf;
 	btCollisionDispatcher*				dispatcher;

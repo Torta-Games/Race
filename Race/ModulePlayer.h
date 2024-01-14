@@ -23,6 +23,7 @@ public:
 	bool CleanUp();
 
 	void CreateCar(int carIndex);
+	void carDynamicSound();
 
 public:
 
@@ -55,10 +56,17 @@ public:
 	btVector3* position;
 	bool coinCollected[10] = { false, false, false, false, false, false, false, false, false, false };
 	int coinFx;
+	int youWinFx, youLoseFx, startBeeps;
+
+	bool playerLose = false;
+	bool playerLoseFxPlayed = false;
+	bool playerWinFxPlayed = false;
+	bool clearedSound = false;
+	bool startBeepsFxPlayed = false;
+
+
 	float maxSpeed = MAX_SPEED;
 	int currentSpeedRange;
 
 	float countdown, killercountdown;
-
-	int vueltas = 0;
 };

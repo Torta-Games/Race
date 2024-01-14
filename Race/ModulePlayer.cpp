@@ -27,7 +27,10 @@ bool ModulePlayer::Start()
 	engine6 = App->audio->LoadFx("Assets/engine6_fx.wav");
 	nitro = App->audio->LoadFx("Assets/nitro_fx.wav");
 	coinFx = App->audio->LoadFx("Assets/collectcoin_fx.wav");
-	
+	youWinFx = App->audio->LoadFx("Assets/youwin_fx.wav");
+	youLoseFx = App->audio->LoadFx("Assets/youlose_fx.wav");
+	startBeeps = App->audio->LoadFx("Assets/startbeeps_fx.wav");
+
 	detectionCube = new Cube();
 	detectionCube->size = {4, 2, 4};
 	detectionCubeBody = App->physics->AddBody(*detectionCube, 0.0f);
@@ -35,6 +38,7 @@ bool ModulePlayer::Start()
 	detectionCubeBody->SetAsSensor(true);
 
 	killercountdown = 60.0f;
+	countdown = 4.0f;
 	
 	return true;
 }
@@ -53,284 +57,270 @@ update_status ModulePlayer::Update(float dt)
 	btVector3 position = vehicle[myCar]->vehicle->getRigidBody()->getWorldTransform().getOrigin();
 	detectionCube->SetPos(position.x(), position.y()+0.3f, position.z());
 	detectionCubeBody->SetPos(position.x(), position.y() + 0.3f, position.z());
-	static int lastSpeedRange = -1;
 
 	myCar = App->network->clientIndex;
 	currentCarSpeed = vehicle[myCar]->GetKmh();
 
-	//if (position.x() > -92 && position.x() < -78 && position.z() > -2 && checkpoint3 == true && win == false) {
-	//	App->scene_intro->winF();
-	//}
 
-	//if (position.x() > 175 && position.x() < 189 && position.x() > 20) {
-	//	checkpoint1 = true;
-	//	LOG("CHECK")
-	//}
-
-
-	//if (position.z() > 0 && position.z() < 14 && position.z() > -7 && checkpoint1 == true) {
-	//	checkpoint2 = true;
-	//	LOG("CHECK")
-	//}
-
-	//if (position.z() > -69 && position.z() < -55 && position.x() < 0 && checkpoint2 == true) {
-	//	checkpoint3 = true;
-	//	LOG("CHECK")
-	//}
-
-// timer 
+	// timer 
 	if (killercountdown > -1 && App->scene_intro->gameStarted) {
 		killercountdown -= dt;
 	}
 	else if (killercountdown < 0)
 	{
-		SDL_Quit();
+		playerLose = true;
 	}
 
-// Car engine dinamic sound
-    if (currentCarSpeed < 5)
-    {
-        currentSpeedRange = 0;
-    }
-    else if (currentCarSpeed < 10)
-    {
-        currentSpeedRange = 1;
-    }
-    else if (currentCarSpeed < 20)
-    {
-        currentSpeedRange = 2;
-    }
-    else if (currentCarSpeed < 40)
-    {
-        currentSpeedRange = 3;
-    }
-    else if (currentCarSpeed < 60)
-    {
-        currentSpeedRange = 4;
-    }
-    else if (currentCarSpeed < 80)
-    {
-        currentSpeedRange = 5;
-    }
-    else
-    {
-        currentSpeedRange = 6;
-    }
+	//countdown
 
-// Car engine dinamic sound
-    if (currentSpeedRange != lastSpeedRange)
-    {
-        Mix_HaltChannel(-1);
-
-        switch (currentSpeedRange)
-        {
-            case 0:
-                App->audio->PlayFx(engine0, -1, 0);
-                break;
-            case 1:
-                App->audio->PlayFx(engine1, -1, 1);
-                break;
-            case 2:
-                App->audio->PlayFx(engine2, -1, 2);
-                break;
-            case 3:
-                App->audio->PlayFx(engine3, -1, 3);
-                break;
-            case 4:
-                App->audio->PlayFx(engine4, -1, 4);
-                break;
-            case 5:
-                App->audio->PlayFx(engine5, -1, 5);
-                break;
-            case 6:
-                App->audio->PlayFx(engine6, -1, 6);
-                break;
-        }
-
-        lastSpeedRange = currentSpeedRange;
-    }
-//Create car
-	//if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && carCount < 2)
-	//{
-	//	CreateCar(carCount);
-	//}
+	if (countdown > 0 && !App->scene_intro->gameStarted) {
+		countdown -= dt;
+		if (!startBeepsFxPlayed) {
+			App->audio->PlayFx(startBeeps);
+			startBeepsFxPlayed = true;
+		}
+	}
+	else if (countdown <= 0 && !App->scene_intro->gameStarted) {
 	
-	if (App->network->gameStarted)
-	{
-		for (int currentCar = 0; currentCar < carCount; currentCar++)
+		App->scene_intro->gameStarted = true;
+	}
+	
+	//Player lose
+	if (playerLose) {
+		if (!clearedSound) {
+			Mix_HaltChannel(-1);
+			clearedSound = true;
+		}
+		if (playerLoseFxPlayed == false) {
+			App->audio->PlayFx(youLoseFx, 0);
+			playerLoseFxPlayed = true;
+		}
+	}
+
+	//Player win
+	if (App->scene_intro->gameFinished) {
+		if (!clearedSound) {
+			Mix_HaltChannel(-1);
+			clearedSound = true;
+		}
+		if (!playerWinFxPlayed) {
+			App->audio->PlayFx(youWinFx);
+			playerWinFxPlayed = true;
+		}
+	}
+
+	if (!playerLose && !App->scene_intro->gameFinished && App->scene_intro->gameStarted) {
+
+		//Función para el sonido del motor
+		carDynamicSound();
+
+		//Create car
+		//if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && carCount < 2)
+		//{
+		//	CreateCar(carCount);
+		//}
+
+		if (App->network->gameStarted)
 		{
-			if (currentCar != myCar)
+			for (int currentCar = 0; currentCar < carCount; currentCar++)
 			{
-				turn[currentCar] = acceleration[currentCar] = brake[currentCar] = 0.0f;
-
-				if (up[currentCar])
+				if (currentCar != myCar)
 				{
-					acceleration[currentCar] = MAX_ACCELERATION;
-				}
+					turn[currentCar] = acceleration[currentCar] = brake[currentCar] = 0.0f;
 
-				if (left[currentCar])
-				{
-					if (turn[currentCar] < TURN_DEGREES)
-						turn[currentCar] += TURN_DEGREES;
-				}
+					if (up[currentCar])
+					{
+						acceleration[currentCar] = MAX_ACCELERATION;
+					}
 
-				if (right[currentCar])
-				{
-					if (turn[currentCar] > -TURN_DEGREES)
-						turn[currentCar] -= TURN_DEGREES;
-				}
+					if (left[currentCar])
+					{
+						if (turn[currentCar] < TURN_DEGREES)
+							turn[currentCar] += TURN_DEGREES;
+					}
 
-				if (reverse[currentCar])
-				{
-					acceleration[currentCar] = -MAX_ACCELERATION;
-				}
+					if (right[currentCar])
+					{
+						if (turn[currentCar] > -TURN_DEGREES)
+							turn[currentCar] -= TURN_DEGREES;
+					}
 
-				if (down[currentCar])
-				{
-					brake[currentCar] = BRAKE_POWER;
-				}
+					if (reverse[currentCar])
+					{
+						acceleration[currentCar] = -MAX_ACCELERATION;
+					}
 
-				if (impulseActivated[currentCar])
-				{
-					vehicle[currentCar]->ApplyEngineForce(3000.0f);
-					impulseActivated[currentCar] = false;
-				}
-				else vehicle[currentCar]->ApplyEngineForce(acceleration[currentCar]);
-				vehicle[currentCar]->Turn(turn[currentCar]);
-				vehicle[currentCar]->Brake(brake[currentCar]);
+					if (down[currentCar])
+					{
+						brake[currentCar] = BRAKE_POWER;
+					}
 
-				vehicle[currentCar]->Render();
+					if (impulseActivated[currentCar])
+					{
+						vehicle[currentCar]->ApplyEngineForce(3000.0f);
+						impulseActivated[currentCar] = false;
+					}
+					else vehicle[currentCar]->ApplyEngineForce(acceleration[currentCar]);
+					vehicle[currentCar]->Turn(turn[currentCar]);
+					vehicle[currentCar]->Brake(brake[currentCar]);
+
+					vehicle[currentCar]->Render();
+				}
 			}
-		}
 
-		turn[myCar] = acceleration[myCar] = brake[myCar] = 0.0f;
+			turn[myCar] = acceleration[myCar] = brake[myCar] = 0.0f;
 
-		if (App->input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT && currentCarSpeed > 0)
-		{
-			acceleration[myCar] = - (currentCarSpeed* vehicle[myCar]->info.frictionSlip);
-		}
+			if (App->input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT && currentCarSpeed > 0)
+			{
+				acceleration[myCar] = -(currentCarSpeed * vehicle[myCar]->info.frictionSlip);
+			}
 
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-		{
-			if (touchingSand) {
-				maxSpeed = 40;
+			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+			{
+				if (touchingSand) {
+					maxSpeed = 40;
+				}
+				else
+				{
+					maxSpeed = MAX_SPEED;
+				}
+
+
+				if (vehicle[myCar]->GetKmh() < maxSpeed)	acceleration[myCar] = MAX_ACCELERATION;
+				up[myCar] = true;
+				if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT && !touchingSand) {
+					if (currentCarSpeed < MAX_TURBO_SPEED) {
+						acceleration[myCar] = MAX_ACCELERATION * 6;
+						if (turboFxPlayed == false) {
+							App->audio->PlayFx(nitro);
+							turboFxPlayed = true;
+						}
+						else
+						{
+							turboFxPlayed = false;
+						}
+					}
+				}
+
+			}
+			else up[myCar] = false;
+			// Car movement
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+			{
+				if (turn[myCar] < TURN_DEGREES)
+					turn[myCar] += TURN_DEGREES;
+				left[myCar] = true;
+			}
+			else left[myCar] = false;
+
+			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+			{
+				if (turn[myCar] > -TURN_DEGREES)
+					turn[myCar] -= TURN_DEGREES;
+				right[myCar] = true;
+			}
+			else right[myCar] = false;
+
+			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+			{
+				acceleration[myCar] = -MAX_ACCELERATION;
+				reverse[myCar] = true;
+			}
+			else up[myCar] = false;
+
+			if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT)
+			{
+				brake[myCar] = BRAKE_POWER;
+				down[myCar] = true;
+			}
+			else down[myCar] = false;
+
+			if (impulseActivated[myCar])
+			{
+				vehicle[myCar]->ApplyEngineForce(3000.0f);
+				impulseActivated[myCar] = false;
+			}
+			else vehicle[myCar]->ApplyEngineForce(acceleration[myCar]);
+			vehicle[myCar]->Turn(turn[myCar]);
+			vehicle[myCar]->Brake(brake[myCar]);
+
+			// Car mass change
+			if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT)
+			{
+				vehicle[myCar]->info.mass -= 1;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT)
+			{
+				vehicle[myCar]->info.mass += 1;
+			}
+
+			// Car friction change
+			if (App->input->GetKey(SDL_SCANCODE_H) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_H) == KEY_REPEAT)
+			{
+				vehicle[myCar]->info.frictionSlip = 100;
+				for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
+				{
+					vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 5000;
+				}
 			}
 			else
 			{
-				maxSpeed = MAX_SPEED;
-			}
-
-
-			if(vehicle[myCar]->GetKmh() < maxSpeed)	acceleration[myCar] = MAX_ACCELERATION;
-			up[myCar] = true;
-			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT && !touchingSand) {
-				if (currentCarSpeed < MAX_TURBO_SPEED) {
-					acceleration[myCar] = MAX_ACCELERATION * 6;
-					if (turboFxPlayed == false) {
-						App->audio->PlayFx(nitro);
-						turboFxPlayed = true;
-					}
-					else
-					{
-						turboFxPlayed = false;
-					}
+				vehicle[myCar]->info.frictionSlip = 5;
+				for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
+				{
+					vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 50.5;
 				}
 			}
 
-		}
-		else up[myCar] = false;
-		// Car movement
-		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-		{
-			if (turn[myCar] < TURN_DEGREES)
-				turn[myCar] += TURN_DEGREES;
-			left[myCar] = true;
-		}
-		else left[myCar] = false;
+			//Gravity modifier
+			if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN)
+			{
+				App->physics->ModifyGravity({ 0, -5, 0 });
+			}
+			if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
+			{
+				App->physics->ModifyGravity({ 0, +5, 0 });
+			}
 
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-		{
-			if (turn[myCar] > -TURN_DEGREES)
-				turn[myCar] -= TURN_DEGREES;
-			right[myCar] = true;
-		}
-		else right[myCar] = false;
+			if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN)
+			{
+				playerLose = true;
+			}
 
-		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-		{
-			acceleration[myCar] = -MAX_ACCELERATION;
-			reverse[myCar] = true;
-		}
-		else up[myCar] = false;
-
-		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT)
-		{
-			brake[myCar] = BRAKE_POWER;
-			down[myCar] = true;
-		}
-		else down[myCar] = false;
-
-		if (impulseActivated[myCar])
-		{
-			vehicle[myCar]->ApplyEngineForce(3000.0f);
-			impulseActivated[myCar] = false;
-		}
-		else vehicle[myCar]->ApplyEngineForce(acceleration[myCar]);
-		vehicle[myCar]->Turn(turn[myCar]);
-		vehicle[myCar]->Brake(brake[myCar]);
-
-		// Car mass change
-		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT)
-		{
-			vehicle[myCar]->info.mass -= 1;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT)
-		{
-			vehicle[myCar]->info.mass += 1;
-		}
-
-		// Car friction change
-		if (App->input->GetKey(SDL_SCANCODE_H) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_H) == KEY_REPEAT)
-		{
-			vehicle[myCar]->info.frictionSlip = 100;
-			for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
-       	 	{
-            vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 5000;
-        	}
-		}
-		else
-		{
-			vehicle[myCar]->info.frictionSlip = 5;
-			for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
-       	 	{
-            vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 50.5;
-        	}
-		}
-
-		//Gravity modifier
-		if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN)
-		{
-			App->physics->ModifyGravity({ 0, -5, 0 });
-		}
-		if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
-		{
-			App->physics->ModifyGravity({ 0, +5, 0 });
-		}
+			if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+			{
+				App->scene_intro->gameFinished = true;
+			}
 
 
-		if (touchingSand) {
-			vehicle[myCar]->info.frictionSlip = 100;
-			if (currentCarSpeed >= 39) vehicle[myCar]->ApplyEngineForce(-1000.0f);
+			if (touchingSand) {
+				vehicle[myCar]->info.frictionSlip = 100;
+				if (currentCarSpeed >= 39) vehicle[myCar]->ApplyEngineForce(-1000.0f);
+			}
+			else vehicle[myCar]->info.frictionSlip = 10;
 		}
-		else vehicle[myCar]->info.frictionSlip = 10;
-
+	}
 		vehicle[myCar]->Render();
 		//detectionCube->Render();
 
 		char title[120];
-		sprintf_s(title, "%.1f Km/h | %.1f Mass | %.1f Friction | %i TouchingSand | %.1f Gravity | %i Coins | %.2f Cronometro | %i GS %i CK %i GF", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand, App->physics->GetGravity().y,App->scene_intro->coinCount, killercountdown, App->scene_intro->gameStarted, App->scene_intro->firstCheckpoint, App->scene_intro->gameFinished);
+
+		if (App->physics->debug) {
+			sprintf_s(title, "%.1f Km/h | %.1f Mass | %.1f Friction | %i TouchingSand | %.1f Gravity | %i Coins | %.2f Cronometro | %i GS %i CK %i GF", vehicle[myCar]->GetKmh(), vehicle[myCar]->info.mass, vehicle[myCar]->info.frictionSlip, touchingSand, App->physics->GetGravity().y, App->scene_intro->coinCount, killercountdown, App->scene_intro->gameStarted, App->scene_intro->firstCheckpoint, App->scene_intro->gameFinished);
+		}
+		else if (!App->scene_intro->gameStarted)
+		{
+			sprintf_s(title, "STARTING IN: %.1f seconds", countdown);
+		}
+		else if (App->scene_intro->gameStarted && !playerLose && !App->scene_intro->gameFinished)
+		{
+			sprintf_s(title, "%.1f Km/h | Monedas %i | Tiempo restante %.2f", vehicle[myCar]->GetKmh(), App->scene_intro->coinCount, killercountdown);
+		}
+		else if (playerLose) sprintf_s(title, "Has perdido :(        Presiona ESC para salir");
+		else if (App->scene_intro->gameFinished) sprintf_s(title, "Has ganado y has conseguido %i monedas!!!      Presiona ESC para salir ", App->scene_intro->coinCount);
+			
 		App->window->SetTitle(title);
-	}
+	
 
 	return UPDATE_CONTINUE;
 }
@@ -388,7 +378,7 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 		for (int currentCar = 0; currentCar < carCount; currentCar++)
 		{
 			if (body1 == vehicle[currentCar] || body2 == vehicle[currentCar]) {
-				SDL_Quit();
+				playerLose = true;
 			}
 		}
 	}
@@ -523,4 +513,72 @@ void ModulePlayer::CreateCar(int carIndex)
 	vehicle[carIndex] = App->physics->AddVehicle(car);
 	vehicle[carIndex]->collision_listeners.add(this); // Add this module as listener to callbacks from vehicle
 	vehicle[carIndex]->SetPos((carIndex * 5) - 86, 1, -10);
+}
+
+
+//Función para el sonido del motor
+void ModulePlayer::carDynamicSound() {
+	// Car engine dinamic sound
+	static int lastSpeedRange = -1;
+	if (currentCarSpeed < 5)
+	{
+		currentSpeedRange = 0;
+	}
+	else if (currentCarSpeed < 10)
+	{
+		currentSpeedRange = 1;
+	}
+	else if (currentCarSpeed < 20)
+	{
+		currentSpeedRange = 2;
+	}
+	else if (currentCarSpeed < 40)
+	{
+		currentSpeedRange = 3;
+	}
+	else if (currentCarSpeed < 60)
+	{
+		currentSpeedRange = 4;
+	}
+	else if (currentCarSpeed < 80)
+	{
+		currentSpeedRange = 5;
+	}
+	else
+	{
+		currentSpeedRange = 6;
+	}
+
+	// Car engine dinamic sound
+	if (currentSpeedRange != lastSpeedRange)
+	{
+		Mix_HaltChannel(-1);
+
+		switch (currentSpeedRange)
+		{
+		case 0:
+			App->audio->PlayFx(engine0, -1, 0);
+			break;
+		case 1:
+			App->audio->PlayFx(engine1, -1, 1);
+			break;
+		case 2:
+			App->audio->PlayFx(engine2, -1, 2);
+			break;
+		case 3:
+			App->audio->PlayFx(engine3, -1, 3);
+			break;
+		case 4:
+			App->audio->PlayFx(engine4, -1, 4);
+			break;
+		case 5:
+			App->audio->PlayFx(engine5, -1, 5);
+			break;
+		case 6:
+			App->audio->PlayFx(engine6, -1, 6);
+			break;
+		}
+
+		lastSpeedRange = currentSpeedRange;
+	}
 }
