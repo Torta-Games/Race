@@ -24,6 +24,7 @@ public:
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 
 	void CreateCube(vec3 size, vec3 position, vec3 rotation, Color color);
+	void winF();
 
 	void winF();
 

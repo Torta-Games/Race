@@ -37,6 +37,7 @@ public:
 
 	int carCount = 0;
 	bool win = false;
+
 	bool up[2] = { false, false };
 	bool down[2] = { false, false };
 	bool left[2] = { false, false };
@@ -52,7 +53,8 @@ public:
 	Cube* detectionCube;
 	PhysBody3D* detectionCubeBody;
 	btVector3* position;
+	bool coinCollected[10] = { false, false, false, false, false, false, false, false, false, false };
+	float maxSpeed = MAX_SPEED;
 
 	int vueltas = 0;
-
 };
