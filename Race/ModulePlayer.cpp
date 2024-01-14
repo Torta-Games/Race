@@ -114,12 +114,7 @@ update_status ModulePlayer::Update(float dt)
 		//Función para el sonido del motor
 		carDynamicSound();
 
-		//Create car
-		//if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && carCount < 2)
-		//{
-		//	CreateCar(carCount);
-		//}
-
+		//Multijugador (no se ha acabado utilizando)
 		if (App->network->gameStarted)
 		{
 			for (int currentCar = 0; currentCar < carCount; currentCar++)
@@ -185,9 +180,9 @@ update_status ModulePlayer::Update(float dt)
 					maxSpeed = MAX_SPEED;
 				}
 
-
 				if (vehicle[myCar]->GetKmh() < maxSpeed)	acceleration[myCar] = MAX_ACCELERATION;
 				up[myCar] = true;
+				//NITRO
 				if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT && !touchingSand) {
 					if (currentCarSpeed < MAX_TURBO_SPEED) {
 						acceleration[myCar] = MAX_ACCELERATION * 6;
@@ -201,7 +196,6 @@ update_status ModulePlayer::Update(float dt)
 						}
 					}
 				}
-
 			}
 			else up[myCar] = false;
 			// Car movement
@@ -255,43 +249,25 @@ update_status ModulePlayer::Update(float dt)
 			}
 
 			// Car friction change
-			if (App->input->GetKey(SDL_SCANCODE_H) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_H) == KEY_REPEAT)
+			if (App->input->GetKey(SDL_SCANCODE_H) == KEY_DOWN && App->physics->debug)
 			{
-				vehicle[myCar]->info.frictionSlip = 100;
-				for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
-				{
-					vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 5000;
-				}
+				vehicle[myCar]->info.frictionSlip += 5;
+
 			}
-			else
+			if (App->input->GetKey(SDL_SCANCODE_J) == KEY_DOWN && App->physics->debug)
 			{
-				vehicle[myCar]->info.frictionSlip = 5;
-				for (int i = 0; i < vehicle[myCar]->vehicle->getNumWheels(); i++)
-				{
-					vehicle[myCar]->vehicle->getWheelInfo(i).m_frictionSlip = 50.5;
-				}
+				vehicle[myCar]->info.frictionSlip += 5;
 			}
 
 			//Gravity modifier
-			if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN)
+			if (App->input->GetKey(SDL_SCANCODE_U) == KEY_DOWN && App->physics->debug)
 			{
 				App->physics->ModifyGravity({ 0, -5, 0 });
 			}
-			if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
+			if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN && App->physics->debug)
 			{
 				App->physics->ModifyGravity({ 0, +5, 0 });
 			}
-
-			if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN)
-			{
-				playerLose = true;
-			}
-
-			if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
-			{
-				App->scene_intro->gameFinished = true;
-			}
-
 
 			if (touchingSand) {
 				vehicle[myCar]->info.frictionSlip = 100;
@@ -328,6 +304,7 @@ update_status ModulePlayer::Update(float dt)
 
 void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
+	//Collisión arena
 	if (body1 == App->scene_intro->sensor_cube2 || body2 == App->scene_intro->sensor_cube2) {
 		for (int currentCar = 0; currentCar < carCount; currentCar++)
 		{

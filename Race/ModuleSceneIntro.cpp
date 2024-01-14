@@ -73,11 +73,6 @@ bool ModuleSceneIntro::Start()
 		coin_body[i]->SetAsSensor(true);
 	}
 
-	//platform = Cube(100, 0.4, 100);
-	//platform.SetPos(0, 1, -86.3288);
-	//platform.SetRotation(45.0f,vec3(1.0f, 0.0f, 0.0f));
-	//platform.color = White;
-
 	physBody = App->physics->AddBody(platform, 0.0f);
 	platform.physbody = physBody;
 	
@@ -230,9 +225,6 @@ update_status ModuleSceneIntro::Update(float dt)
 	//p.axis = true;
 	//p.Render();
 
-	if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)	cronometro.Start();
-	if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)	cronometro.Stop();
-	
 	for (int i = 0; i < 3; i++)
 	{
 		rotationAngle[i] -= dt*100;  
@@ -258,22 +250,6 @@ update_status ModuleSceneIntro::Update(float dt)
 	{
 		cube.Render();
 	}
-
-	if (App->input->GetKey(SDL_SCANCODE_K))
-	{
-		int imageWidth = 1920;
-		int imageHeight = 1080;
-
-		int windowWidth, windowHeight;
-		SDL_GetWindowSize(App->window->window, &windowWidth, &windowHeight);
-		int xPos = (windowWidth - imageWidth) / 2;
-		int yPos = (windowHeight - imageHeight) / 2;
-
-		App->renderer->Blit(winTex, xPos, yPos, NULL);
-
-	}
-
-
 	return UPDATE_CONTINUE;
 }
 
